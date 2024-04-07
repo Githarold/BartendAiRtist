@@ -33,4 +33,4 @@ We're always looking to improve BartendAiRtist and welcome contributions. If you
 
 ## 📞 Contact Us
 
-Got questions or feedback? We'd love to hear from you! Contact us at [contact@bartendairtist.com](mailto:contact@bartendairtist.com).
+Got questions or feedback? We'd love to hear from you! Contact us at [harold3312@naver.com](mailto:harold3312@naver.com).
