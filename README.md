@@ -1,36 +1,35 @@
 # 🍹 BartendAiRtist
 
-Welcome to BartendAiRtist, where your mood and taste craft your cocktail! Utilizing the cutting-edge generative AI (Chat GPT API), BartendAiRtist is an innovative Android application designed to revolutionize your cocktail experience. Simply chat with our AI bartender, share how you're feeling and your preferences, and let the magic begin. Whether you're in the mood for something new, a classic cocktail, or want to customize your drink, BartendAiRtist offers a personalized experience, followed by preparing your perfect drink on the spot with our embedded system.
+BartendAiRtist에 오신 것을 환영합니다, 여기서 당신의 기분과 취향이 칵테일을 만듭니다! 생성형 AI (Chat GPT API)를 활용한 BartendAiRtist는 당신의 칵테일 여정을 시작하도록 해줄 혁신적인 안드로이드 애플리케이션입니다. AI 바텐더와 대화를 나누고, 취향과 현재 기분을 공유하면, 마법이 시작됩니다. 새로운 것을 원하든, 클래식한 칵테일을 원하든, 혹은 음료를 커스텀하고 싶든, BartendAiRtist는 개인화된 경험을 제공한 후, 즉석으로 완벽한 음료를 준비합니다.
 
 ## 🌟 Features
 
-- **📲 Personalized Cocktail Recommendations:** Share your mood and preferences to receive cocktail suggestions tailored just for you.
-- **🎨 Creative Cocktail Crafting:** Explore new horizons with cocktails crafted by generative AI based on your input.
-- **🤖 Automated Cocktail Preparation:** Once you've made your choice, our system takes care of the mixing and serves you your perfect drink.
-- **💬 Interactive Chat Interface:** Engage in a conversational experience with our AI to discover your next favorite cocktail.
-- **👍 User-Friendly Android Application:** Access BartendAiRtist anywhere, anytime through our easy-to-use Android app.
+- **📲 개인 맞춤형 칵테일 추천:** 당신의 기분과 선호도를 말하며 당신만을 위한 칵테일 제안을 받아보세요.
+- **🤖 자동 칵테일 준비:** 선택을 하면, 선택을 바탕으로 당신에게 완벽한 음료를 제공합니다.
+- **💬 상호작용 챗 인터페이스:** 우리의 AI와 대화를 나누며 당신의 취향을 저격할 칵테일을 발견하세요.
+- **👍 사용자 친화적인 안드로이드 애플리케이션:** 언제 어디서나 우리의 쉽게 사용할 수 있는 안드로이드 앱으로 BartendAiRtist에 접속하세요.
 
 ## 📱 App Menu
 
-- **🔍 Recommend Me:** Get AI-powered personalized cocktail recommendations based on your current mood and preferences.
-- **✨ Custom Cocktail:** Create your unique cocktail by specifying your desired ingredients and flavors.
-- **📖 Cocktail List:** Browse through an extensive list of classic and popular cocktails to find your favorite.
-- **👆 Select & Enjoy:** Choose a cocktail from the recommendations or the list, and let our embedded system prepare it for you.
+- **📖 칵테일 리스트:** 클래식하고 인기 있는 칵테일의 리스트를 탐색하여 좋아하는 칵테을 찾아보세요.
+- **🔍 칵테일 추천 받기:** 현재 기분과 선호도를 바탕으로 AI가 제공하는 개인 맞춤형 칵테일 추천을 받아보세요.
+- **✨ 칵테일 커스텀:** 원하는 재료와 양을 지정하여 나만의 독특한 칵테일을 만드세요.
+- **👆 선택 & 즐기기:** 추천받은 칵테일이나 리스트에서 칵테일을 선택하고, 우리의 내장 시스템이 준비해드립니다.
 
 ## 🚀 Getting Started
 
-To embark on your BartendAiRtist journey, follow these steps:
+BartendAiRtist 여정을 시작하려면 다음 단계를 따라주세요:
 
-1. **Download the App:** Install the BartendAiRtist application from the Google Play Store onto your Android device.
-2. **Explore the Menu:** Tap on the menu to choose between getting recommendations, crafting a custom cocktail, or browsing the cocktail list.
-3. **Interact with the AI:** For personalized recommendations or to craft your drink, chat with our AI bartender.
-4. **Make Your Selection:** Choose your preferred cocktail from the AI suggestions, the custom option, or the cocktail list.
-5. **Enjoy Your Creation:** Watch as our system prepares your selected or customized cocktail. Cheers!
+1. **앱 다운로드:** Google Play Store에서 BartendAiRtist 애플리케이션을 당신의 안드로이드 기기에 설치하세요.
+2. **메뉴 탐색:** 메뉴를 탭하여 칵테일 리스트, 칵테일 추천 받기, 칵테일 커스텀 중 선택하세요.
+3. **AI와 상호작용:** 개인 맞춤형 추천을 받거나 음료를 만들기 위해, 우리의 AI 바텐더와 대화하세요.
+4. **선택하기:** AI 제안, 커스텀 옵션, 또는 칵테일 리스트에서 선호하는 칵테일을 선택하세요.
+5. **창작물 즐기기:** 우리의 스마트 바텐더가 칵테일을 준비하는 것을 지켜보세요. 건배!
 
 ## 💡 Contributing
 
-We're always looking to improve BartendAiRtist and welcome contributions. If you have ideas for new features or feedback on existing ones, please reach out by opening an issue or submitting a pull request.
+우리는 항상 BartendAiRtist를 개선하고 새로운 기능이나 기존 기능에 대한 피드백을 환영합니다. 새로운 아이디어가 있거나 피드백을 공유하고 싶다면, 이슈를 열거나 Pull request를 제출해 주세요.
 
 ## 📞 Contact Us
 
-Got questions or feedback? We'd love to hear from you! Contact us at [harold3312@naver.com](mailto:harold3312@naver.com).
+질문이나 피드백이 있으신가요? 여러분의 의견을 언제나 환영합니다! [harold3312@naver.com](mailto:harold3312@naver.com)으로 연락주세요.
