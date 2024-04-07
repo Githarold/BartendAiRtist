@@ -31,10 +31,6 @@ To embark on your BartendAiRtist journey, follow these steps:
 
 We're always looking to improve BartendAiRtist and welcome contributions. If you have ideas for new features or feedback on existing ones, please reach out by opening an issue or submitting a pull request.
 
-## 📄 License
-
-BartendAiRtist is released under the MIT License. For more details, see the LICENSE file.
-
 ## 📞 Contact Us
 
 Got questions or feedback? We'd love to hear from you! Contact us at [contact@bartendairtist.com](mailto:contact@bartendairtist.com).
