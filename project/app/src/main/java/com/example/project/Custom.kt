@@ -82,7 +82,7 @@ class Custom : AppCompatActivity() {
         builder.setPositiveButton("확인") { dialogInterface: DialogInterface, _: Int ->
             dialogInterface.dismiss() // 다이얼로그 닫기
             // 칵테일 만들기 동작을 수행
-            val intent = Intent(this, CustomMethodChoose::class.java)
+            val intent = Intent(this, CustomMethod::class.java)
             startActivity(intent)
         }
         builder.setNegativeButton("취소") { dialogInterface: DialogInterface, _: Int ->
