@@ -7,13 +7,13 @@
     android:layout_height="match_parent">
 
     <Button
-        android:id="@+id/buildButton"
+        android:id="@+id/buildBtn"
         android:layout_width="141dp"
         android:layout_height="109dp"
         android:text="build"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toEndOf="@+id/stiringButton"
+        app:layout_constraintStart_toEndOf="@+id/stiringBtn"
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="0.535" />
 
@@ -32,12 +32,12 @@
         android:text="칵테일 제조 방법을 \n 선택해주세요" />
 
     <Button
-        android:id="@+id/stiringButton"
+        android:id="@+id/stiringBtn"
         android:layout_width="141dp"
         android:layout_height="109dp"
         android:text="stiring"
         app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toStartOf="@+id/buildButton"
+        app:layout_constraintEnd_toStartOf="@+id/buildBtn"
         app:layout_constraintHorizontal_bias="0.5"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"

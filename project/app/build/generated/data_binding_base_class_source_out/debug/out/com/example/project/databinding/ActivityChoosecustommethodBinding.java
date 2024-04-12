@@ -20,21 +20,21 @@ public final class ActivityChoosecustommethodBinding implements ViewBinding {
   private final ConstraintLayout rootView;
 
   @NonNull
-  public final Button buildButton;
+  public final Button buildBtn;
 
   @NonNull
   public final ConstraintLayout choosecustomemthod;
 
   @NonNull
-  public final Button stiringButton;
+  public final Button stiringBtn;
 
   private ActivityChoosecustommethodBinding(@NonNull ConstraintLayout rootView,
-      @NonNull Button buildButton, @NonNull ConstraintLayout choosecustomemthod,
-      @NonNull Button stiringButton) {
+      @NonNull Button buildBtn, @NonNull ConstraintLayout choosecustomemthod,
+      @NonNull Button stiringBtn) {
     this.rootView = rootView;
-    this.buildButton = buildButton;
+    this.buildBtn = buildBtn;
     this.choosecustomemthod = choosecustomemthod;
-    this.stiringButton = stiringButton;
+    this.stiringBtn = stiringBtn;
   }
 
   @Override
@@ -64,22 +64,22 @@ public final class ActivityChoosecustommethodBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.buildButton;
-      Button buildButton = ViewBindings.findChildViewById(rootView, id);
-      if (buildButton == null) {
+      id = R.id.buildBtn;
+      Button buildBtn = ViewBindings.findChildViewById(rootView, id);
+      if (buildBtn == null) {
         break missingId;
       }
 
       ConstraintLayout choosecustomemthod = (ConstraintLayout) rootView;
 
-      id = R.id.stiringButton;
-      Button stiringButton = ViewBindings.findChildViewById(rootView, id);
-      if (stiringButton == null) {
+      id = R.id.stiringBtn;
+      Button stiringBtn = ViewBindings.findChildViewById(rootView, id);
+      if (stiringBtn == null) {
         break missingId;
       }
 
-      return new ActivityChoosecustommethodBinding((ConstraintLayout) rootView, buildButton,
-          choosecustomemthod, stiringButton);
+      return new ActivityChoosecustommethodBinding((ConstraintLayout) rootView, buildBtn,
+          choosecustomemthod, stiringBtn);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

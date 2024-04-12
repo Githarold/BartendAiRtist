@@ -34,16 +34,20 @@ public final class ActivitySelectBinding implements ViewBinding {
   public final LinearLayout main;
 
   @NonNull
+  public final AppCompatButton selectCocktail;
+
+  @NonNull
   public final TextView textView;
 
   private ActivitySelectBinding(@NonNull LinearLayout rootView, @NonNull AppCompatButton backBtn,
       @NonNull ImageView cocktailImg, @NonNull TextView cocktailName, @NonNull LinearLayout main,
-      @NonNull TextView textView) {
+      @NonNull AppCompatButton selectCocktail, @NonNull TextView textView) {
     this.rootView = rootView;
     this.backBtn = backBtn;
     this.cocktailImg = cocktailImg;
     this.cocktailName = cocktailName;
     this.main = main;
+    this.selectCocktail = selectCocktail;
     this.textView = textView;
   }
 
@@ -94,6 +98,12 @@ public final class ActivitySelectBinding implements ViewBinding {
 
       LinearLayout main = (LinearLayout) rootView;
 
+      id = R.id.select_cocktail;
+      AppCompatButton selectCocktail = ViewBindings.findChildViewById(rootView, id);
+      if (selectCocktail == null) {
+        break missingId;
+      }
+
       id = R.id.textView;
       TextView textView = ViewBindings.findChildViewById(rootView, id);
       if (textView == null) {
@@ -101,7 +111,7 @@ public final class ActivitySelectBinding implements ViewBinding {
       }
 
       return new ActivitySelectBinding((LinearLayout) rootView, backBtn, cocktailImg, cocktailName,
-          main, textView);
+          main, selectCocktail, textView);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

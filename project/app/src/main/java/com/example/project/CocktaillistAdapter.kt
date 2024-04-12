@@ -17,21 +17,21 @@ class CocktaillistAdapter(
         return ViewHolder(view)
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val name = cock_list[position]
-        holder.nameTextView.text = name
+        val cocktailName = cock_list[position]
+        holder.cocktailNameTextView.text = cocktailName
 
-        val imageId = holder.itemView.context.resources.getIdentifier(name, "drawable", holder.itemView.context.packageName)
+        val imageId = holder.itemView.context.resources.getIdentifier(cocktailName, "drawable", holder.itemView.context.packageName)
         holder.cocktailImageView.setImageResource(imageId)
 
         holder.itemView.setOnClickListener {
-            listener.onCocktailClick(name)
+            listener.onCocktailClick(cocktailName)
         }
     }
     override fun getItemCount(): Int {
         return cock_list.size
     }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nameTextView: TextView = itemView.findViewById(R.id.test_cocktail_name)
+        val cocktailNameTextView: TextView = itemView.findViewById(R.id.test_cocktail_name)
         val cocktailImageView: ImageView = itemView.findViewById(R.id.img_cocktail)
     }
 }
