@@ -46,8 +46,8 @@ class select : AppCompatActivity() {
                         val inStream = s.inputStream
 
 //                        val data = "1"
-//                        val data = "2\n\n2\n3\n4\n5\n6\n7"
-                        val data = "3\n\n2\n3\n4\n5\n6\n7\n\n3\n4\n5\n"
+                        val data = "2\n\n2\n3\n4\n5\n6\n7"
+//                        val data = "3\n\n2\n3\n4\n5\n6\n7\n\n3\n4\n5\n"
 //                        val data = "4\n\n2\n3\n4\n5\n6\n7"
                         outStream.write(data.toByteArray())
 
