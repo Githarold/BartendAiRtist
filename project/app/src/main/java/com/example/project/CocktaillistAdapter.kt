@@ -9,7 +9,7 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 
 class CocktaillistAdapter(
-    private val cock_list: List<String>,
+    private val cocktail_list: List<String>,
     private val listener: OnCocktailClickListener
 ) : RecyclerView.Adapter<CocktaillistAdapter.ViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -17,7 +17,7 @@ class CocktaillistAdapter(
         return ViewHolder(view)
     }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val cocktailName = cock_list[position]
+        val cocktailName = cocktail_list[position]
         holder.cocktailNameTextView.text = cocktailName
 
         val imageId = holder.itemView.context.resources.getIdentifier(cocktailName, "drawable", holder.itemView.context.packageName)
@@ -28,11 +28,11 @@ class CocktaillistAdapter(
         }
     }
     override fun getItemCount(): Int {
-        return cock_list.size
+        return cocktail_list.size
     }
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val cocktailNameTextView: TextView = itemView.findViewById(R.id.test_cocktail_name)
-        val cocktailImageView: ImageView = itemView.findViewById(R.id.img_cocktail)
+        val cocktailImageView: ImageView = itemView.findViewById(R.id.cocktail_img)
     }
 }
 

@@ -34,7 +34,7 @@ class IngredientAdapter(private val ingredients: List<Ingredient>) : RecyclerVie
     override fun getItemCount() = ingredients.size
 
     class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val nameTextView: TextView = itemView.findViewById(R.id.ingredient_name)
+        val nameTextView: TextView = itemView.findViewById(R.id.ingredientName)
         val quantityTextView: TextView = itemView.findViewById(R.id.how_many)
         val plusButton: Button = itemView.findViewById(R.id.plus)
         val minusButton: Button = itemView.findViewById(R.id.minus)

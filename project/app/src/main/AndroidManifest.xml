@@ -19,13 +19,16 @@
             android:name=".select"
             android:exported="false" />
         <activity
-            android:name=".chat"
+            android:name=".Chat"
             android:exported="false" />
         <activity
-            android:name=".choose"
+            android:name=".Choose"
             android:exported="false" />
         <activity
-            android:name=".CustomMethod"
+            android:name=".ChooseCustomMethod"
+            android:exported="false" />
+        <activity
+            android:name=".SetBuildOrder"
             android:exported="false" />
         <activity
             android:name=".MainActivity"

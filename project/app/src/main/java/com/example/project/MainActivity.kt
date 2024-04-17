@@ -20,12 +20,12 @@ class MainActivity : AppCompatActivity() {
         }
         val chooseBtn = findViewById<Button>(R.id.chooseBtn)
         chooseBtn.setOnClickListener {
-            val intent = Intent(this, choose::class.java)
+            val intent = Intent(this, Choose::class.java)
             startActivity(intent)
         }
         val recommendBtn = findViewById<Button>(R.id.recommendBtn)
         recommendBtn.setOnClickListener {
-            val intent = Intent(this, chat::class.java)
+            val intent = Intent(this, Chat::class.java)
             startActivity(intent)
         }
         val customBtn = findViewById<Button>(R.id.customBtn)
