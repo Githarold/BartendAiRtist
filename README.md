@@ -5,6 +5,8 @@ BartendAiRtist에 오신 것을 환영합니다, 당신의 취향과 기분에 �
 생성형 AI (Chat GPT API)를 활용한 BartendAiRtist는 당신의 칵테일 여정을 시작하도록 해줄 혁신적인 임베디드 시스템입니다. 안드로이드 앱에서 AI 바텐더와 대화를 나누고, 취향과 현재 기분을 말하기만 하면, 마법이 시작됩니다.
 
 새로운 것을 원하든, 클래식한 칵테일을 원하든, 혹은 음료를 커스텀하고 싶든, BartendAiRtist는 개인화된 경험을 제공한 후, 즉석에서 완벽한 칵테일을 준비합니다.
+![image](https://github.com/Githarold/BartendAiRtist/assets/101968287/f757d01d-db2b-4b82-b4eb-07041bcc0a2b)
+
 
 ## 🌟 Features
 
