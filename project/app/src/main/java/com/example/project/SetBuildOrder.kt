@@ -49,12 +49,12 @@ class SetBuildOrder : AppCompatActivity() {
         val selectBtn = findViewById<Button>(R.id.selectBtn)
         selectBtn.setOnClickListener {
             val currentList = adapter.getItems()
-            val formattedData = formatDataForCommunication(currentList)
-            println(formattedData)
+            val formattedData = formatOrderDataForCommunication(currentList)
+//            println(formattedData)
 //            val dataToSend = currentList.joinToString(",") { it.toString() }
-            println(currentList)
+//            println(currentList)
 //            println(dataToSend)
-//            connectToServer()
+//            connectToServer(formattedData)
         }
     }
 
@@ -87,4 +87,18 @@ class SetBuildOrder : AppCompatActivity() {
             }
         }.start()
     }
+}
+
+fun formatOrderDataForCommunication(currentList: List<Ingredient>): String {
+    val stringBuilder = StringBuilder()
+    val totalIngredients = 8 // 전체 재료 개수
+    for (ingredient in currentList) {
+        stringBuilder.append("${ingredient.quantity}\n")
+    }
+    // 나머지 요소는 빈 줄로 채움
+    val remainingEmptyLines = totalIngredients - currentList.size
+    repeat(remainingEmptyLines) {
+        stringBuilder.append("\n")
+    }
+    return stringBuilder.toString()
 }
