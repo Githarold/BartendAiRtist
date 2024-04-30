@@ -49,12 +49,11 @@ class SetBuildOrder : AppCompatActivity() {
         val selectBtn = findViewById<Button>(R.id.selectBtn)
         selectBtn.setOnClickListener {
             val currentList = adapter.getItems()
-            val formattedData = formatOrderDataForCommunication(currentList)
-//            println(formattedData)
-//            val dataToSend = currentList.joinToString(",") { it.toString() }
-//            println(currentList)
-//            println(dataToSend)
-//            connectToServer(formattedData)
+            val ingredientOrderList = getIngredientOrderList(currentList)
+            val formattedDataList = formatDataForCommunicationWithOrder(receivedList)
+            val formattedData = formatDataWithOrder(formattedDataList, ingredientOrderList)
+            println(formattedData)
+            connectToServer(formattedData)
         }
     }
 
@@ -89,7 +88,7 @@ class SetBuildOrder : AppCompatActivity() {
     }
 }
 
-fun formatOrderDataForCommunication(currentList: List<Ingredient>): String {
+fun getIngredientOrderList(currentList: List<Ingredient>): String {
     val stringBuilder = StringBuilder()
     val totalIngredients = 8 // 전체 재료 개수
     for (ingredient in currentList) {
@@ -98,7 +97,35 @@ fun formatOrderDataForCommunication(currentList: List<Ingredient>): String {
     // 나머지 요소는 빈 줄로 채움
     val remainingEmptyLines = totalIngredients - currentList.size
     repeat(remainingEmptyLines) {
-        stringBuilder.append("\n")
+        stringBuilder.append("0\n")
     }
     return stringBuilder.toString()
+}
+
+fun formatDataWithOrder(receivedList: String, ingredientOrderList: String): String {
+    val formattedData = StringBuilder()
+
+    formattedData.append(receivedList)
+
+    // ingredientOrderList를 추가
+    formattedData.append("\n\n") // '\n\n' 추가
+    formattedData.append(ingredientOrderList)
+
+    return formattedData.toString()
+}
+
+fun formatDataForCommunicationWithOrder(ingredients: ArrayList<Ingredient>?): String {
+    //TODO
+    val header = "3" // 일단은 3으로 고정
+
+    val body = StringBuilder()
+
+    // ingredients는 항상 ex1에서 ex8까지 고정된 순서로 있다고 가정
+    val expectedIngredients = listOf("ex1", "ex2", "ex3", "ex4", "ex5", "ex6", "ex7", "ex8")
+    expectedIngredients.forEach { ingredientName ->
+        val quantity = ingredients?.find { it.name == ingredientName }?.quantity ?: 0
+        body.append("$quantity\n")
+    }
+
+    return "$header\n\n${body.toString()}"
 }
