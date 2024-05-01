@@ -1,8 +1,17 @@
+/**
+ * select.kt
+ * 칵테일 선택하기 액티비티
+ * json 파일로부터 칵테일 이름, 상세 설명, 레시피를 읽어 화면에 표시한다
+ * 사용자는 해당 액티비티에서 칵테일을 선택할 수 있다. 즉, 서버로 데이터를 전송한다
+ */
+
+
 package com.example.project
 
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
@@ -10,6 +19,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import org.json.JSONObject
 import java.io.BufferedReader
 import java.io.InputStreamReader
 import java.net.Socket
@@ -26,17 +36,34 @@ class select : AppCompatActivity() {
             insets
         }
         val cocktailName = intent.getStringExtra("COCKTAIL_NAME") ?: return
+        val fileName = "$cocktailName.json"
+        println(fileName)
+        val json = try {
+            assets.open(fileName).reader().readText()
+        } catch (e: IOException) {
+            e.printStackTrace()
+            return  // 파일이 없거나 읽을 수 없는 경우 함수를 종료합니다.
+        }
+        val jsonObject = JSONObject(json)
+
+        // 각 키에 대해 적절한 메서드 사용
+        val name = jsonObject.getString("name")
+        val description = jsonObject.getString("description")
+        val recipe = jsonObject.getString("recipe")
+        val order = jsonObject.getString("order")
 
         val cocktailImg = findViewById<ImageView>(R.id.cocktail_img)
         val imageId = resources.getIdentifier(cocktailName, "drawable", packageName)
 
-        val content = readTextFile(this, cocktailName)
+
         cocktailImg.setImageResource(imageId)
         val cocktailTextView = findViewById<TextView>(R.id.textView)
-        cocktailTextView.text = content
+        cocktailTextView.text = description
         val cocktailNameView = findViewById<TextView>(R.id.cocktail_name)
-        cocktailNameView.text = cocktailName
+        cocktailNameView.text = name
         val selectBtn = findViewById<Button>(R.id.select_cocktail)
+
+        // 서버에 데이터 전송
         selectBtn.setOnClickListener {
             Thread {
                 try {
@@ -45,10 +72,8 @@ class select : AppCompatActivity() {
                         val outStream = s.outputStream
                         val inStream = s.inputStream
 
-//                        val data = "1"
-                        val data = "2\n\n2\n3\n4\n5\n6\n7"
-//                        val data = "3\n\n2\n3\n4\n5\n6\n7\n\n3\n4\n5\n"
-//                        val data = "4\n\n2\n3\n4\n5\n6\n7"
+                        val data = "2\n\n$recipe"
+                        println(data)
                         outStream.write(data.toByteArray())
 
                         // 데이터 수신을 위한 버퍼 준비

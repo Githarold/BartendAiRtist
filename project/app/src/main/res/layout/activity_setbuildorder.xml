@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/main"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".SetBuildOrder">
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/backBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="뒤로가기"
+        android:background="@drawable/btn_background"
+        android:layout_margin="5dp"
+        android:textColor="#FFFFFF"/>
+
+    <TextView
+        android:id="@+id/build_order_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="빌드 순서를 정해주세요"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center"
+        android:textSize="30sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <TextView
+        android:id="@+id/Additional_Instructions_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="상단에 있는 재료부터 추출됩니다"
+        android:fontFamily="sans-serif-condensed"
+        android:gravity="center"
+        android:textSize="15sp"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"/>
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/cocktail_ingredients_list"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/selectBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/edit_background"
+        android:layout_gravity="bottom|right"
+        android:text="선택" />
+</LinearLayout>
