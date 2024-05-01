@@ -1,3 +1,10 @@
+/**
+ * ChooseCustomMethod.kt
+ * 사용자에게 빌드, 스터링 중 원하는 커스텀 방식을 고르게 하는 액티비티
+ * 스터링 선택 경우: 커스텀 데이터를 서버로 전송
+ * 빌드 선택 경우: SetBuildOrder.kt 호출, 빌드 순서를 설정하게 함
+ */
+
 package com.example.project
 
 import android.content.Intent
@@ -35,6 +42,11 @@ class ChooseCustomMethod : AppCompatActivity() {
         }
     }
 
+
+
+    /**
+     * 함수 정의 부분
+     */
 
     private fun  connectToServer(dataToSend:String){
         Thread {

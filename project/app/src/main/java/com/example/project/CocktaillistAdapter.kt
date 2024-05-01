@@ -1,3 +1,10 @@
+/**
+ * CocktaillistAdapter.kt
+ * 칵테일 목록을 표시하는 어댑터를 정의
+ * 각 칵테일 항목의 이름과 해당 이미지가 포함
+ */
+
+
 package com.example.project
 
 import android.view.LayoutInflater

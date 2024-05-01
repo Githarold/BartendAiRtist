@@ -1,3 +1,11 @@
+/**
+ * select.kt
+ * 칵테일 선택하기 액티비티
+ * json 파일로부터 칵테일 이름, 상세 설명, 레시피를 읽어 화면에 표시한다
+ * 사용자는 해당 액티비티에서 칵테일을 선택할 수 있다. 즉, 서버로 데이터를 전송한다
+ */
+
+
 package com.example.project
 
 import android.content.Context
@@ -38,7 +46,7 @@ class select : AppCompatActivity() {
         }
         val jsonObject = JSONObject(json)
 
-// 각 키에 대해 적절한 메서드 사용
+        // 각 키에 대해 적절한 메서드 사용
         val name = jsonObject.getString("name")
         val description = jsonObject.getString("description")
         val recipe = jsonObject.getString("recipe")
@@ -55,6 +63,7 @@ class select : AppCompatActivity() {
         cocktailNameView.text = name
         val selectBtn = findViewById<Button>(R.id.select_cocktail)
 
+        // 서버에 데이터 전송
         selectBtn.setOnClickListener {
             Thread {
                 try {

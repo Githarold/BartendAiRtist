@@ -1,3 +1,9 @@
+/**
+ * Choose.kt
+ * 사용자에게 칵테일을 선택할 수 있는 화면을 제공하는 액티비티
+ * select.kt를 호출해 실제 칵테일 선택을 가능하게 한다
+ */
+
 package com.example.project
 
 import android.content.Intent
@@ -27,6 +33,7 @@ class Choose : AppCompatActivity() {
             "whitelady"
         )
         val adapter = CocktaillistAdapter(cocktail_names, object : OnCocktailClickListener {
+            // select.kt 액티비티 호출
             override fun onCocktailClick(name: String) {
                 val intent = Intent(this@Choose, select::class.java)
                 intent.putExtra("COCKTAIL_NAME", name)

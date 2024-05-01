@@ -1,3 +1,9 @@
+/**
+ * IngredientAdapter.kt
+ * 재료 목록을 표시하는 데 사용되는 RecyclerView와 관련된 어댑터 클래스
+ * 재료의 이름과 수량을 표시하는 뷰 홀더 클래스와 그 뷰 홀더를 생성하고 바인딩하는 메서드가 포함되어 있다
+ */
+
 package com.example.project
 
 import android.view.LayoutInflater
