@@ -13,6 +13,7 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 
+
 class Chat : AppCompatActivity() {
 
     private lateinit var receiverName: String
@@ -24,6 +25,7 @@ class Chat : AppCompatActivity() {
 
         binding = ActivityChatBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())

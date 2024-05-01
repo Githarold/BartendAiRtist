@@ -21,28 +21,35 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="10dp"
-        android:orientation="horizontal"
-        android:weightSum="100">
+        android:orientation="horizontal">
+
+        <!-- 입력 창 -->
         <EditText
             android:id="@+id/message_edit"
-            android:layout_width="wrap_content"
+            android:layout_width="328dp"
             android:layout_height="50dp"
             android:layout_marginStart="10dp"
-            android:layout_weight="85"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/edit_background"
             android:hint="메시지를 입력하세요"
-            android:paddingStart="10dp"/>
+            android:paddingStart="10dp"
+            android:paddingTop="5dp"
+            android:paddingEnd="5dp"
+            android:paddingBottom="5dp" />
 
+        <!-- 전송 버튼 -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/send_btn"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
-            android:layout_marginStart="10dp"
+            android:layout_width="45dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="0dp"
+            android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
-            android:layout_weight="15"
+            android:layout_marginBottom="5dp"
             android:background="@drawable/btn_background"
             android:text="전송"
-            android:textColor="#FFFFFF"
-            />
+            android:textColor="#FFFFFF" />
     </LinearLayout>
 </RelativeLayout>
