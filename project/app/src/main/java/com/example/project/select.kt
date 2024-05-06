@@ -58,12 +58,14 @@ class select : AppCompatActivity() {
         selectBtn.setOnClickListener {
             Thread {
                 try {
-                    val socket = Socket("10.0.2.2", 3000)
+//                    val socket = Socket("192.168.0.14", 5000)
+                    val socket = Socket("210.125.177.71", 8080)
+//                    val socket = Socket("10.0.2.2", 5000)
                     socket.use { s ->
                         val outStream = s.outputStream
                         val inStream = s.inputStream
 
-                        val data = "2\n\n$recipe"
+                        val data = recipe
                         println(data)
                         outStream.write(data.toByteArray())
 
