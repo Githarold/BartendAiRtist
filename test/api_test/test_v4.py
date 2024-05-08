@@ -3,7 +3,7 @@ import json
 
 class Recommender:
     def __init__(self):
-        self.client = OpenAI(api_key='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')
+        self.client = OpenAI()
         self.model = "gpt-3.5-turbo"
         self.max_tokens = 500
         self.messages = []

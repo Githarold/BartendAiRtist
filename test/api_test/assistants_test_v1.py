@@ -26,7 +26,7 @@ class EventHandler(AssistantEventHandler):
         self.data_file.close()
 
 # OpenAI 클라이언트 초기화
-client = OpenAI(api_key='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')
+client = OpenAI()
 
 # Few-shot Learning을 위한 예시 입력 선언
 example_input_dict = {
