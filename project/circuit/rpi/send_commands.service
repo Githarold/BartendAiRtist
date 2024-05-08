@@ -1,0 +1,10 @@
+[Unit]
+Description=Send Commands to Arduino on Startup
+After=multi-user.target
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/python /home/sw/project/send_commands.py
+
+[Install]
+WantedBy=multi-user.target
