@@ -1,3 +1,7 @@
+
+
+
+
 // step.cpp
 #include "step.h"
 
@@ -123,32 +127,32 @@ void performAdditionalSteps(int motor, int steps) {
 
 
 void disk_rotate(int disk_step) {
-    // 반시계방향 회전 처리
-    if (disk_step >= 0 && disk_step <= 7) {
-        disk_step-=disk_step;
+    if (disk_step == 0) {
+        // 입력 값이 0인 경우, 아무 동작도 하지 않습니다.
+        Serial.println("No action needed for disk_step 0.");
+    }
+    else if (disk_step > 0 && disk_step <= 7) {
+        // 반시계방향 회전 처리
+        disk_step = disk_step - 1;
         digitalWrite(ENB[0], HIGH); // 반시계방향 활성화
         softStart(0);  // 반시계 부드러운 시작 (0.5바퀴)
         performAdditionalSteps(0, disk_step * 50);
         softStop(0);   // 반시계 부드러운 정지 (0.5바퀴)
         digitalWrite(ENB[0], LOW); // 반시계방향 비활성화
     }
-    // 시계방향 회전 처리
-    else if (disk_step <= -1 && disk_step >= -7) {
-        disk_step=disk_step+1;
+    else if (disk_step < 0 && disk_step >= -7) {
+        // 시계방향 회전 처리
+        disk_step = disk_step + 1;
         digitalWrite(ENB[1], HIGH); // 시계방향 활성화
         softStart(1);  // 시계 부드러운 시작 (0.5바퀴)
         performAdditionalSteps(1, disk_step * -50);
         softStop(1);   // 시계방향 부드러운 정지 (0.5바퀴)
         digitalWrite(ENB[1], LOW); // 시계방향 비활성화
     }
-    // 유효하지 않은 입력 처리
     else {
         // 유효하지 않은 입력일 경우 아무 작업도 수행하지 않음
-        // 혹은 에러 메시지 출력 등의 작업을 추가할 수 있음
+        Serial.println("Invalid input for disk_step. No action performed.");
     }
 }
-
-
-
 
 
