@@ -105,3 +105,35 @@ with client.beta.threads.runs.stream(
     
 ) as stream:
     stream.until_done()
+
+import ast
+
+def adjust_pumps(recipe):
+    total_pumps = sum(recipe[1].values())
+    target_pumps = 7
+    if total_pumps > target_pumps:
+        print("Adjusting recipe...")
+        adjustment_ratio = target_pumps / total_pumps
+        adjusted_pumps = {ingredient: round(pumps * adjustment_ratio)
+                          for ingredient, pumps in recipe[1].items()}
+        return (recipe[0], adjusted_pumps)
+    else:
+        return recipe
+
+try:
+    with open("data.txt", 'r') as file:
+        data = file.read()
+        recipes = ast.literal_eval(data)
+    
+    # 조정 결과 출력
+    for recipe in recipes:
+        adjusted_recipe = adjust_pumps(recipe)
+        print("Adjusted Recipe:", adjusted_recipe)
+        
+except FileNotFoundError:
+    print("The file was not found.")
+except SyntaxError:
+    print("Error parsing data, check the format of your file.")
+except Exception as e:
+    print("An unexpected error occurred:", e)
+    
