@@ -1,4 +1,3 @@
-import ast
 from openai import OpenAI, AssistantEventHandler
 
 class EventHandler(AssistantEventHandler):
