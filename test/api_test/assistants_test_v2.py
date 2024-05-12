@@ -1,7 +1,7 @@
+import ast
 from openai import OpenAI, AssistantEventHandler
 
 class EventHandler(AssistantEventHandler):
-    # 이벤트 핸들러 클래스 정의. 스트리밍 데이터를 처리합니다.
     def __init__(self):
         super().__init__()
         self.file_mode = False                  # 파일 기록 모드 초기화
@@ -28,12 +28,21 @@ class EventHandler(AssistantEventHandler):
         else:
             print(text, end="", flush=True)  # 파일 모드가 아닌 경우 표준 출력
 
-    def __del__(self):
-        # 객체 소멸 시 호출되는 메서드
+    def finalize_buffer(self):
+        # 버퍼의 내용을 파일에 쓰고 버퍼 비우기
         if self.buffer:
-            self.data_file.write(self.buffer + "\n")  # 버퍼의 내용을 파일에 쓰기
-            self.buffer = ""
+            self.data_file.write(self.buffer + "\n")
+            self.data_file.flush()  # 파일의 버퍼를 강제로 비워 디스크에 쓰기
+            # self.buffer = ""  # 버퍼 초기화
+            
+    def close(self):
+        self.finalize_buffer()  # 마지막 데이터를 파일에 저장
         self.data_file.close()  # 파일 닫기
+
+    # def __del__(self):
+    #     # 객체 소멸 시 호출되는 메서드
+    #     self.finalize_buffer()  # 마지막 데이터를 파일에 저장
+    #     self.data_file.close()  # 파일 닫기
 
 # OpenAI 클라이언트 초기화
 client = OpenAI()
@@ -69,44 +78,50 @@ example_output_list2 = [
 # AI 바텐더 Assistant 생성
 bartender = client.beta.assistants.create(
     name="AI Bartender",
-    instructions="""
-    You are an AI bartender. First, receive the inventory as a dictionary named 'example_dict', 
-    then consider the user's mood and preferences to recommend a cocktail. Ensure that the total volume of ingredients does not exceed 250ml.
-    Use a specific delimiter (@) to separate the cocktail recommendation from the recipe,
-    which should be provided in a structured list format, including two dictionaries:
-    one for the order of ingredients and another for the number of 30ml pumps required for each ingredient.
-    """,
+    instructions="""\
+You are an AI bartender. First, receive the inventory as a dictionary named 'example_dict', \
+then consider the user's mood and preferences to recommend a cocktail. Ensure that the total volume of ingredients does not exceed 250ml.\
+Use a specific delimiter (@) to separate the cocktail recommendation from the recipe,\
+which should be provided in a structured list format, including two dictionaries:\
+one for the order of ingredients and another for the number of 30ml pumps required for each ingredient.\
+""",
     model="gpt-4-turbo",
 )
 
 # 대화를 관리할 Thread 생성
 thread = client.beta.threads.create()
 
-# 사용자 입력 처리 스트리밍
-event_handler = EventHandler()
-
-real_user_mood = input("당신에게 딱 맞는 칵테일을 추찬해드립니다! : ")
-with client.beta.threads.runs.stream(
-    thread_id=thread.id,
-    assistant_id=bartender.id,
-    instructions=f"""
-    Example 1:
-    Input: Inventory - {example_input_dict}, Mood/Preference - '{example_user_mood1}'
-    Output: {example_gpt_response1}@{example_output_list1}
+while True:
+    # 사용자 입력 처리 스트리밍
+    event_handler = EventHandler()
     
-    Example 2:
-    Input: Inventory - {example_input_dict}, Mood/Preference - '{example_user_mood2}'
-    Output: {example_gpt_response2}@{example_output_list2}
+    real_user_mood = input("당신에게 딱 맞는 칵테일을 추찬해드립니다! : ")
+    if real_user_mood == 'q':
+        break
     
-    You have to response in Korean:
-    Inventory - {real_input_dict}, Mood/Preference - '{real_user_mood}'
-    """,
-    event_handler=event_handler
+    with client.beta.threads.runs.stream(
+        thread_id=thread.id,
+        assistant_id=bartender.id,
+        instructions=f"""
+        Example 1:
+        Input: Inventory - {example_input_dict}, Mood/Preference - '{example_user_mood1}'
+        Output: {example_gpt_response1}@{example_output_list1}
+        
+        Example 2:
+        Input: Inventory - {example_input_dict}, Mood/Preference - '{example_user_mood2}'
+        Output: {example_gpt_response2}@{example_output_list2}
+        
+        You have to response in Korean:
+        Inventory - {real_input_dict}, Mood/Preference - '{real_user_mood}'
+        """,
+        event_handler=event_handler
+        
+    ) as stream:
+        stream.until_done()
+        
+    event_handler.close()
     
-) as stream:
-    stream.until_done()
-
-import ast
+    print('\n\n')
 
 def adjust_pumps(recipe):
     total_pumps = sum(recipe[1].values())
@@ -119,21 +134,7 @@ def adjust_pumps(recipe):
         return (recipe[0], adjusted_pumps)
     else:
         return recipe
-
-try:
-    with open("data.txt", 'r') as file:
-        data = file.read()
-        recipes = ast.literal_eval(data)
     
-    # 조정 결과 출력
-    for recipe in recipes:
-        adjusted_recipe = adjust_pumps(recipe)
-        print("Adjusted Recipe:", adjusted_recipe)
-        
-except FileNotFoundError:
-    print("The file was not found.")
-except SyntaxError:
-    print("Error parsing data, check the format of your file.")
-except Exception as e:
-    print("An unexpected error occurred:", e)
-    
+# file = open("data.txt", "r")
+# data = file.read().strip()
+# print(data)
