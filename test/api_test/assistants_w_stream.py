@@ -28,21 +28,24 @@ class EventHandler(AssistantEventHandler):
         else:
             print(text, end="", flush=True)  # 파일 모드가 아닌 경우 표준 출력
 
-    def finalize_buffer(self):
-        # 버퍼의 내용을 파일에 쓰고 버퍼 비우기
-        if self.buffer:
-            self.data_file.write(self.buffer + "\n")
-            self.data_file.flush()  # 파일의 버퍼를 강제로 비워 디스크에 쓰기
-            # self.buffer = ""  # 버퍼 초기화
+    # def finalize_buffer(self):
+    #     # 버퍼의 내용을 파일에 쓰고 버퍼 비우기
+    #     if self.buffer:
+    #         self.data_file.write(self.buffer + "\n")
+    #         self.data_file.flush()  # 파일의 버퍼를 강제로 비워 디스크에 쓰기
+    #         # self.buffer = ""  # 버퍼 초기화
             
-    def close(self):
-        self.finalize_buffer()  # 마지막 데이터를 파일에 저장
-        self.data_file.close()  # 파일 닫기
-
-    # def __del__(self):
-    #     # 객체 소멸 시 호출되는 메서드
+    # def close(self):
     #     self.finalize_buffer()  # 마지막 데이터를 파일에 저장
     #     self.data_file.close()  # 파일 닫기
+
+    def __del__(self):
+        # 객체 소멸 시 호출되는 메서드
+        # self.finalize_buffer()  # 마지막 데이터를 파일에 저장
+        if self.buffer:
+            self.data_file.write(self.buffer)
+            self.data_file.flush()
+        self.data_file.close()  # 파일 닫기
 
 # OpenAI 클라이언트 초기화
 client = OpenAI()
@@ -92,8 +95,6 @@ one for the order of ingredients and another for the number of 30ml pumps requir
 thread = client.beta.threads.create()
 
 while True:
-    # 사용자 입력 처리 스트리밍
-    event_handler = EventHandler()
     
     real_user_mood = input("당신에게 딱 맞는 칵테일을 추찬해드립니다! : ")
     if real_user_mood == 'q':
@@ -114,15 +115,13 @@ while True:
         You have to response in Korean:
         Inventory - {real_input_dict}, Mood/Preference - '{real_user_mood}'
         """,
-        event_handler=event_handler
+        event_handler=EventHandler()
         
     ) as stream:
         stream.until_done()
-        
-    event_handler.close()
     
     print('\n\n')
-
+    
 def adjust_pumps(recipe):
     total_pumps = sum(recipe[1].values())
     target_pumps = 7
@@ -135,6 +134,7 @@ def adjust_pumps(recipe):
     else:
         return recipe
     
-# file = open("data.txt", "r")
-# data = file.read().strip()
-# print(data)
+file = open("data.txt", "r")
+data = file.read()
+print(data)
+file.close()
