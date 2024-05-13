@@ -2,9 +2,6 @@ import threading
 import time
 from parsing import *
 from protocol2serial import *
-import serial
-
-ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 
 PATH = "./cocktail.json"
 
@@ -35,7 +32,7 @@ class protocol_2(threading.Thread):
             self.cocktail_src[1]-=self.data.content[1]
             list_json(self.cocktail_src, PATH)            
             step_list, lin_list=protocol2serial(self.data)
-            send_data_to_arduino(step_list, lin_list)
+            # send_data_to_arduino(step_list, lin_list)
             print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall("hello world")
@@ -59,7 +56,7 @@ class protocol_3(threading.Thread):
             self.cocktail_src[1]-=self.data.content[1]
             list_json(self.cocktail_src, PATH)
             step_list, lin_list=protocol2serial(self.data)
-            send_data_to_arduino(step_list, lin_list)
+            # send_data_to_arduino(step_list, lin_list)
             print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall(b"hello world")
