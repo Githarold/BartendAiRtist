@@ -1,3 +1,4 @@
+//main.ino
 #include <Arduino.h>
 #include "step.h"
 #include "linear.h"
@@ -10,6 +11,9 @@
 int disk_rotate_list[MAX_SIZE];
 int dispenser_push_list[MAX_SIZE];
 int listSize = 0;  // 실제 사용되는 리스트의 크기
+
+
+int dc_motor_state = 0;  // 전역 변수로 선언
 
 
 void setup() {
@@ -26,19 +30,29 @@ void setup() {
 
 
     // 선형 모터 핀 설정
+    
     pinMode(ENC, OUTPUT);
     pinMode(IN5, OUTPUT);
     pinMode(IN6, OUTPUT);
+
+
+    pinMode(END, OUTPUT);
+    pinMode(IN7, OUTPUT);
+    pinMode(IN8, OUTPUT);
 }
 
 
 void loop() {
+   
+    
+
     if (Serial.available() > 0) {
         String data = Serial.readStringUntil('\n');
-        Serial.println("Received: " + data);  // 데이터 수신 확인 출력
+        
         parseData(data);  // 데이터 파싱 함수 호출
 
-
+        
+        
         // 모터 작동 로직 실행
         for (int i = 0; i < listSize; i++) {
             disk_rotate(disk_rotate_list[i]);
@@ -49,6 +63,14 @@ void loop() {
                 delay(1000);  // dispenser_activate 사이의 딜레이
             }
         }
+
+      
+      if (dc_motor_state == 1) {
+        stir(63, 50, 2);
+        delay(1000);
+      }
+
+      Serial.println("1");
     }
 }
 
@@ -56,7 +78,12 @@ void loop() {
 
 
 void parseData(String data) {
-    int firstBracket = data.indexOf('[');
+    int firstComma = data.indexOf(',');
+    dc_motor_state = data.substring(0, firstComma).toInt();  // dc_input 파싱
+
+
+
+    int firstBracket = data.indexOf('[', firstComma);
     int secondBracket = data.indexOf(']', firstBracket + 1);
     int thirdBracket = data.indexOf('[', secondBracket + 1);
     int lastBracket = data.indexOf(']', thirdBracket + 1);
@@ -94,8 +121,3 @@ void parseData(String data) {
     }
     dispenser_push_list[dispenserCount] = dispenserData.substring(startPos).toInt();  // 마지막 원소 처리
 }
-
-
-
-
-

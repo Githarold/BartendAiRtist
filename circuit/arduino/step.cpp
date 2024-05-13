@@ -1,9 +1,7 @@
-
-
-
-
 // step.cpp
 #include "step.h"
+
+
 
 
 const int ENA[2] = {2, 2}; // 모터 A와 B의 활성화 핀
@@ -14,8 +12,12 @@ int IN3[2] = {6, 3};       // 모터 A와 B의 입력 3
 int IN4[2] = {7, 4};       // 모터 A와 B의 입력 4
 
 
+
+
 const int delays[] = {45, 38, 32, 27, 23, 20, 17, 15, 13, 11, 10, 9, 8, 7, 7, 6, 6, 6, 5, 5, 5, 5, 5, 5, 4};
 int reverseDelays[sizeof(delays) / sizeof(int)];
+
+
 
 
 void setupMotorPins(int motor) {
@@ -27,9 +29,13 @@ void setupMotorPins(int motor) {
     pinMode(IN4[motor], OUTPUT);
 
 
+
+
     digitalWrite(ENA[motor], HIGH);
     digitalWrite(ENB[motor], HIGH);
 }
+
+
 
 
 void setupReverseDelays() {
@@ -39,11 +45,15 @@ void setupReverseDelays() {
 }
 
 
+
+
 void performSteps(int motor, const int delayArray[]) {
     for (int i = 0; i < sizeof(delays) / sizeof(int); i++) {
         stepMotorSoftStart(motor, delayArray[i]);
     }
 }
+
+
 
 
 void softStart(int motor) {
@@ -53,6 +63,8 @@ void softStart(int motor) {
 }
 
 
+
+
 void softStop(int motor) {
     for (int i = sizeof(delays) / sizeof(delays[0]) - 1; i >= 0; i--) {
         stepMotorSoftStart(motor, delays[i]);
@@ -60,8 +72,12 @@ void softStop(int motor) {
 }
 
 
+
+
 void stepMotorSoftStart(int motor, int stepDelay) {
     digitalWrite(ENA[motor], HIGH);
+
+
 
 
     digitalWrite(IN1[motor], HIGH);
@@ -71,6 +87,8 @@ void stepMotorSoftStart(int motor, int stepDelay) {
     delay(stepDelay);
 
 
+
+
     digitalWrite(IN1[motor], HIGH);
     digitalWrite(IN2[motor], LOW);
     digitalWrite(IN3[motor], LOW);
@@ -78,11 +96,15 @@ void stepMotorSoftStart(int motor, int stepDelay) {
     delay(stepDelay);
 
 
+
+
     digitalWrite(IN1[motor], LOW);
     digitalWrite(IN2[motor], HIGH);
     digitalWrite(IN3[motor], LOW);
     digitalWrite(IN4[motor], HIGH);
     delay(stepDelay);
+
+
 
 
     digitalWrite(IN1[motor], LOW);
@@ -91,6 +113,8 @@ void stepMotorSoftStart(int motor, int stepDelay) {
     digitalWrite(IN4[motor], LOW);
     delay(stepDelay);
 }
+
+
 
 
 void performAdditionalSteps(int motor, int steps) {
@@ -103,6 +127,8 @@ void performAdditionalSteps(int motor, int steps) {
         delay(d);
 
 
+
+
         digitalWrite(IN1[motor], HIGH);
         digitalWrite(IN2[motor], LOW);
         digitalWrite(IN3[motor], LOW);
@@ -110,11 +136,15 @@ void performAdditionalSteps(int motor, int steps) {
         delay(d);
 
 
+
+
         digitalWrite(IN1[motor], LOW);
         digitalWrite(IN2[motor], HIGH);
         digitalWrite(IN3[motor], LOW);
         digitalWrite(IN4[motor], HIGH);
         delay(d);
+
+
 
 
         digitalWrite(IN1[motor], LOW);
@@ -126,10 +156,11 @@ void performAdditionalSteps(int motor, int steps) {
 }
 
 
+
+
 void disk_rotate(int disk_step) {
     if (disk_step == 0) {
-        // 입력 값이 0인 경우, 아무 동작도 하지 않습니다.
-        Serial.println("No action needed for disk_step 0.");
+        
     }
     else if (disk_step > 0 && disk_step <= 7) {
         // 반시계방향 회전 처리
@@ -154,5 +185,3 @@ void disk_rotate(int disk_step) {
         Serial.println("Invalid input for disk_step. No action performed.");
     }
 }
-
-
