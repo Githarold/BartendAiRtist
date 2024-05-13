@@ -34,7 +34,8 @@ def send_data_to_arduino(dc_input, disk_rotation_list, dispensor_activate_list):
 
    while True:
        if ser.in_waiting > 0:
-           response = ser.readline().decode().strip()
+           response = ser.readline().decode('utf-8').strip()
            print("Received from Arduino:", response)
+           print("Finished!")
            break
        time.sleep(0.1)
