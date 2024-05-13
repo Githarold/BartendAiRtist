@@ -1,8 +1,9 @@
 import threading
 import time
 from parsing import *
+from protocol2serial import *
 
-PATH = "/home/seongbin/homework/system/project/cocktail.json"
+PATH = "./cocktail.json"
 
 class protocol_1(threading.Thread):
     def __init__(self, socket, addr, cocktail_src):
@@ -29,8 +30,10 @@ class protocol_2(threading.Thread):
         if self.sema.acquire(blocking=False):
             print("만드는 중(스터링)")
             self.cocktail_src[1]-=self.data.content[1]
-            list_json(self.cocktail_src, PATH)
-            time.sleep(10)
+            list_json(self.cocktail_src, PATH)            
+            step_list, lin_list=protocol2serial(self.data)
+            send_data_to_arduino(step_list, lin_list)
+            print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall("hello world")
             self.socket.close()
@@ -52,8 +55,9 @@ class protocol_3(threading.Thread):
             print("만드는 중(빌드)")
             self.cocktail_src[1]-=self.data.content[1]
             list_json(self.cocktail_src, PATH)
-            print(self.data.order)
-            time.sleep(5)
+            step_list, lin_list=protocol2serial(self.data)
+            send_data_to_arduino(step_list, lin_list)
+            print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall(b"hello world")
             self.socket.close()

@@ -2,7 +2,7 @@ import threading
 import time
 from parsing import *
 
-PATH = "/home/seongbin/homework/system/project/cocktail.json"
+PATH = "./cocktail.json"
 
 class protocol_1(threading.Thread):
     def __init__(self, socket, addr, cocktail_src):

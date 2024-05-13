@@ -4,7 +4,7 @@ from protocol import Protocol
 from processing1 import *
 from parsing import json_list
 
-PATH = "/home/seongbin/homework/system/project/cocktail.json"
+PATH = "./cocktail.json"
 cocktail_src = json_list(PATH)
 sema = threading.Semaphore(1)
 
