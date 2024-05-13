@@ -2,7 +2,7 @@ from protocol import Protocol
 import time
 import serial
 
-# ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
+ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 
 def protocol2serial(data : Protocol):
     disk_rotation_list, dispensor_activate_list = [], []
@@ -22,18 +22,19 @@ def protocol2serial(data : Protocol):
             before=new
             disk_rotation_list.append(temp)
             dispensor_activate_list.append(data.content[new])
-
+    total=sum(disk_rotation_list)
+    disk_rotation_list.append(-total)
     return disk_rotation_list, dispensor_activate_list
 
-# def send_data_to_arduino(disk_rotation_list, dispensor_activate_list):
-#    data_string = f"{disk_rotation_list},{dispensor_activate_list}\n"
-#    ser.write(data_string.encode())
-#    print("Sent data:", data_string)
+def send_data_to_arduino(dc_input, disk_rotation_list, dispensor_activate_list):
+   data_string = f"{dc_input},{disk_rotation_list},{dispensor_activate_list}\n"
+   ser.write(data_string.encode())
+   print("Sent data:", data_string)
 
 
-#    while True:
-#        if ser.in_waiting > 0:
-#            response = ser.readline().decode().strip()
-#            print("Received from Arduino:", response)
-#            break
-#        time.sleep(0.1)
+   while True:
+       if ser.in_waiting > 0:
+           response = ser.readline().decode().strip()
+           print("Received from Arduino:", response)
+           break
+       time.sleep(0.1)

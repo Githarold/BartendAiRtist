@@ -32,7 +32,7 @@ class protocol_2(threading.Thread):
             self.cocktail_src[1]-=self.data.content[1]
             list_json(self.cocktail_src, PATH)            
             step_list, lin_list=protocol2serial(self.data)
-            # send_data_to_arduino(step_list, lin_list)
+            send_data_to_arduino(1,step_list, lin_list)
             print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall("hello world")
@@ -56,7 +56,7 @@ class protocol_3(threading.Thread):
             self.cocktail_src[1]-=self.data.content[1]
             list_json(self.cocktail_src, PATH)
             step_list, lin_list=protocol2serial(self.data)
-            # send_data_to_arduino(step_list, lin_list)
+            send_data_to_arduino(0,step_list, lin_list)
             print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall(b"hello world")
