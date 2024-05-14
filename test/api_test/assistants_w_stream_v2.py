@@ -21,8 +21,8 @@ class EventHandler(AssistantEventHandler):
             self.buffer = parts[1]
         elif self.file_mode:
             self.buffer += text
-        # else:
-        print(text, end="", flush=True)
+        else:
+            print(text, end="", flush=True)
 
     def __del__(self):
         if self.buffer:
@@ -105,7 +105,7 @@ while True:
         
         You have to respond in Korean:
         Input: Inventory - {real_input_dict}, Mood/Preference - '{real_user_mood}'
-        Output:
+        Output: 
         """,
         event_handler=EventHandler()
         
@@ -125,8 +125,3 @@ def adjust_pumps(recipe):
         return (recipe[0], adjusted_pumps)
     else:
         return recipe
-
-file = open("data.txt", "r")
-data = file.read()
-print(data)
-file.close()

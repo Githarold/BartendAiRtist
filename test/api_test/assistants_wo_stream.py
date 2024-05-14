@@ -38,7 +38,7 @@ You are an AI bartender. First, receive the inventory as a dictionary named 'exa
 then consider the user's mood and preferences to recommend a cocktail. Ensure that the total volume of ingredients does not exceed 250ml.\
 Use a specific delimiter (@) to separate the cocktail recommendation from the recipe,\
 which should be provided in a structured list format, including two dictionaries:\
-one for the order of ingredients and another for the number of 30ml pumps required for each ingredient.\
+one for the "Order" of ingredients and another for the "Integer" number of 30ml pumps required for each ingredient.\
 """,
     model="gpt-4o",
 )
@@ -78,18 +78,20 @@ while True:
     
     You have to respond in Korean:
     Input: Inventory - {real_input_dict}, Mood/Preference - '{real_user_mood}'
-    Output:
+    Output: 
     """,
     )
 
     if run.status == 'completed': 
-        messages = client.beta.threads.messages.list(thread_id=thread.id)
-        for message in messages.data:
-            for content_block in message.content:
-                if content_block.type == 'text':
-                    recommend_reason, recipe_string = content_block.text.value.split('@')
-                    print(recommend_reason)
-                    print(f"Elapsed time: {time.time() - start_time}")
+        # 가장 최근의 메시지만 가져옵니다.
+        message = client.beta.threads.messages.list(thread_id=thread.id, order="desc", limit=1)
+        if message.data:
+            content_block = message.data[0].content[0]  # 가장 최근의 메시지의 첫 번째 content block
+            if content_block.type == 'text':
+                # print(content_block.text.value)
+                recommend_reason, recipe_string = content_block.text.value.split('@')
+                print(recommend_reason)
+                print(f"Elapsed time: {time.time() - start_time}")
     else:
         print(f"Run Status: {run.status}")
         
