@@ -42,7 +42,7 @@ Use a specific delimiter (@) to separate the cocktail recommendation from the re
 which should be provided in a structured list format, including two dictionaries:\
 one for the order of ingredients and another for the number of 30ml pumps required for each ingredient.\
 """,
-    model="gpt-4-turbo",
+    model="gpt-4o",
 )
 
 # 대화를 관리할 Thread 생성

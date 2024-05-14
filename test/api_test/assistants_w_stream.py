@@ -21,23 +21,12 @@ class EventHandler(AssistantEventHandler):
             self.file_mode = True
             parts = text.split('@')
             print(parts[0], end="", flush=True)   # '@' 앞 부분은 표준 출력
-            self.buffer += parts[1]               # '@' 뒷 부분은 버퍼에 추가
+            self.buffer = parts[1]                # '@' 뒷 부분은 버퍼에 추가 (기존 값 덮어쓰기)
         elif self.file_mode:
             self.buffer += text  # 파일 모드인 경우 텍스트를 버퍼에 추가
         else:
             print(text, end="", flush=True)  # 파일 모드가 아닌 경우 표준 출력
-
-    # def finalize_buffer(self):
-    #     # 버퍼의 내용을 파일에 쓰고 버퍼 비우기
-    #     if self.buffer:
-    #         self.data_file.write(self.buffer + "\n")
-    #         self.data_file.flush()  # 파일의 버퍼를 강제로 비워 디스크에 쓰기
-    #         # self.buffer = ""  # 버퍼 초기화
             
-    # def close(self):
-    #     self.finalize_buffer()  # 마지막 데이터를 파일에 저장
-    #     self.data_file.close()  # 파일 닫기
-
     def __del__(self):
         # 객체 소멸 시 호출되는 메서드
         # self.finalize_buffer()  # 마지막 데이터를 파일에 저장
@@ -62,19 +51,21 @@ real_input_dict = {
 
 example_user_mood1 = "오늘따라 뭔가 시원하고 달콤한 칵테일이 마시고 싶어. 피로도 풀리고 기분도 좋아지는 그런 종류로."
 example_gpt_response1 = "그런 기분에 딱 맞는 칵테일로 '모히토'를 추천드릴게요. 신선한 민트와 라임이 들어가 상큼하고 시원한 맛이 특징이랍니다. 럼 주를 기반으로 해서 달콤한 맛도 느끼실 수 있고요."
-example_user_mood2 = "I'm in the mood for something tropical and refreshing."
-example_gpt_response2 = "Based on your mood and the ingredients you have, I recommend a Tropical Punch. It's refreshing and perfect for a tropical vibe."
+example_user_mood2 = "오늘 정말 무더운 날이네요. 뭔가 시원하고 상쾌한 음료가 마시고 싶어요."
+example_gpt_response2 = "열대의 상쾌함을 원하신다면 '트로피칼 펀치'를 추천드리고 싶어요. 이 칵테일은 자몽 주스와 오렌지 주스를 기반으로 하고 있어서 상큼하고, 럼과 트리플 섹이 더해져 풍미가 풍부합니다. 정말 열대 지방의 분위기를 느낄 수 있죠."
+# example_user_mood2 = "I'm in the mood for something tropical and refreshing."
+# example_gpt_response2 = "Based on your mood and the ingredients you have, I recommend a Tropical Punch. It's refreshing and perfect for a tropical vibe."
 
 real_user_mood = "오늘 차여서 기분이 우울해. 기분 전환을 하고싶어"
 
-example_output_list1 = [
-    {'Rum': 1, 'Diluted Lemon Juice': 2, 'Orange Juice': 3},  # 순서
-    {'Rum': 2, 'Diluted Lemon Juice': 3, 'Orange Juice': 4}   # 30ml 펌프 횟수
+example_output_list1 = [\
+{'Rum': 1, 'Diluted Lemon Juice': 2, 'Orange Juice': 3},\
+{'Rum': 2, 'Diluted Lemon Juice': 3, 'Orange Juice': 4}\
 ]
 
 example_output_list2 = [
-    {'Rum': 1, 'Orange Juice': 2, 'Grapefruit Juice': 3, 'Triple Sec': 4, 'Cranberry Juice': 5},
-    {'Rum': 2, 'Orange Juice': 4, 'Grapefruit Juice': 4, 'Triple Sec': 1, 'Cranberry Juice': 2}
+{'Rum': 1, 'Orange Juice': 2, 'Grapefruit Juice': 3, 'Triple Sec': 4, 'Cranberry Juice': 5},\
+{'Rum': 2, 'Orange Juice': 4, 'Grapefruit Juice': 4, 'Triple Sec': 1, 'Cranberry Juice': 2}\
 ]
 
 # AI 바텐더 Assistant 생성
@@ -87,7 +78,7 @@ Use a specific delimiter (@) to separate the cocktail recommendation from the re
 which should be provided in a structured list format, including two dictionaries:\
 one for the order of ingredients and another for the number of 30ml pumps required for each ingredient.\
 """,
-    model="gpt-4-turbo",
+    model="gpt-4o",
 )
 
 # 대화를 관리할 Thread 생성
