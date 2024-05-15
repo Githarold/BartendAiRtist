@@ -138,7 +138,7 @@ class Chat : AppCompatActivity() {
 
     companion object {
         val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
-        private const val MY_SECRET_KEY = "우리 api key"
+        private const val MY_SECRET_KEY = ""
     }
 }
 
