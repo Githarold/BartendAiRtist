@@ -15,6 +15,16 @@
         android:layout_above="@id/input_layout"
         />
 
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/tv_welcome"
+        android:layout_centerInParent="true"
+        android:text="Welcome"
+        android:gravity="center"
+        android:textSize="28sp"
+        />
+
     <LinearLayout
         android:id="@+id/input_layout"
         android:layout_width="match_parent"
