@@ -23,10 +23,6 @@ import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import java.util.concurrent.TimeUnit
 
-
-
-
-
 class Chat : AppCompatActivity() {
     var recycler_view: RecyclerView? = null
     var tv_welcome: TextView? = null
@@ -120,11 +116,10 @@ class Chat : AppCompatActivity() {
                         val responseBody = response.body
                         val responseBodyString = responseBody?.string()
                         jsonObject = JSONObject(responseBodyString)
-                        println(jsonObject)
-                        val jsonArray = jsonObject?.getJSONArray("choices")
-                        println(jsonArray)
+                        var jsonArray = jsonObject?.getJSONArray("choices")
                         val result = jsonArray?.getJSONObject(0)?.getString("message")
-                        addResponse(result?.trim { it <= ' ' })
+                        val content = JSONObject(result).getString("content")
+                        addResponse(content?.trim { it <= ' ' })
                     } catch (e: JSONException) {
                         e.printStackTrace()
                     }
