@@ -21,6 +21,7 @@ import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
+import com.google.gson.Gson
 import java.util.concurrent.TimeUnit
 
 class Chat : AppCompatActivity() {
@@ -85,24 +86,27 @@ class Chat : AppCompatActivity() {
 
     fun callAPI(question: String?) {
         //okhttp
+        val prompt = generate_cocktail_recipe(question.toString())
+
         messageList!!.add(Message("...", Message.SENT_BY_BOT))
-        val `object` = JSONObject()
+        val obj = JSONObject()
         try {
-            `object`.put("model", "gpt-3.5-turbo")
-            `object`.put("messages", JSONArray().put(JSONObject().put("role", "system").put("content", question))) // 객체 배열로 변경
-            `object`.put("max_tokens", 4000)
+            obj.put("model", "gpt-3.5-turbo")
+            obj.put("messages", JSONArray().put(JSONObject().put("role", "system").put("content", prompt))) // 객체 배열로 변경
+            obj.put("max_tokens", 500)
         } catch (e: JSONException) {
             e.printStackTrace()
         }
 
-        val body = `object`.toString().toRequestBody(JSON)
-//        println(body)
+        val body = obj.toString().toRequestBody(JSON)
+
+//        println(prompt)
         val request: Request = Builder()
             .url("https://api.openai.com/v1/chat/completions")
             .header("Authorization", "Bearer " + MY_SECRET_KEY)
             .post(body)
             .build()
-//        println(request)
+
         client.newCall(request).enqueue(object : okhttp3.Callback {
             override fun onFailure(call: okhttp3.Call, e: IOException) {
                 addResponse("Failed to load response due to " + e.message)
@@ -110,7 +114,7 @@ class Chat : AppCompatActivity() {
 
             override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
                 if (response.isSuccessful) {
-//                    println(response)
+                    println(response)
                     var jsonObject: JSONObject? = null
                     try {
                         val responseBody = response.body
@@ -137,3 +141,28 @@ class Chat : AppCompatActivity() {
     }
 }
 
+fun generate_cocktail_recipe(userMood: String?): String{
+    val example1 = mapOf(
+        "input" to "기분이 우울할 때",
+        "output" to mapOf(
+            "name" to "블루 라군",
+            "ingredients" to listOf("보드카", "블루 큐라소", "레몬 주스", "소다"),
+            "reason" to "상쾌한 맛이 기분을 전환시켜 줍니다."
+        )
+    )
+
+    val example2 = mapOf(
+        "input" to "기분이 행복할 때",
+        "output" to mapOf(
+            "name" to "마가리타",
+            "ingredients" to listOf("데킬라", "트리플 섹", "라임 주스"),
+            "reason" to "새콤달콤한 맛이 기쁜 기분을 더욱 돋보이게 합니다."
+        )
+    )
+
+    var prompt = "Input: ${example1["input"]}\nOutput: ${Gson().toJson(example1["output"])}\n\n"
+    prompt += "Input: ${example2["input"]}\nOutput: ${Gson().toJson(example2["output"])}\n\n"
+    prompt += "Input: $userMood\nOutput:"
+    return prompt
+
+}
