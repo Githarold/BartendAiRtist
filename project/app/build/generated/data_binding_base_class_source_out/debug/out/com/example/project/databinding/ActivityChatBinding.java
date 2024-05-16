@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.widget.AppCompatButton;
@@ -37,16 +38,20 @@ public final class ActivityChatBinding implements ViewBinding {
   @NonNull
   public final AppCompatButton sendBtn;
 
+  @NonNull
+  public final TextView tvWelcome;
+
   private ActivityChatBinding(@NonNull RelativeLayout rootView,
       @NonNull RecyclerView chatRecyclerView, @NonNull LinearLayout inputLayout,
-      @NonNull RelativeLayout main, @NonNull EditText messageEdit,
-      @NonNull AppCompatButton sendBtn) {
+      @NonNull RelativeLayout main, @NonNull EditText messageEdit, @NonNull AppCompatButton sendBtn,
+      @NonNull TextView tvWelcome) {
     this.rootView = rootView;
     this.chatRecyclerView = chatRecyclerView;
     this.inputLayout = inputLayout;
     this.main = main;
     this.messageEdit = messageEdit;
     this.sendBtn = sendBtn;
+    this.tvWelcome = tvWelcome;
   }
 
   @Override
@@ -102,8 +107,14 @@ public final class ActivityChatBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.tv_welcome;
+      TextView tvWelcome = ViewBindings.findChildViewById(rootView, id);
+      if (tvWelcome == null) {
+        break missingId;
+      }
+
       return new ActivityChatBinding((RelativeLayout) rootView, chatRecyclerView, inputLayout, main,
-          messageEdit, sendBtn);
+          messageEdit, sendBtn, tvWelcome);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

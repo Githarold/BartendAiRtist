@@ -4,6 +4,7 @@ package com.example.project.databinding;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import androidx.annotation.NonNull;
@@ -20,11 +21,25 @@ public final class SendBinding implements ViewBinding {
   private final RelativeLayout rootView;
 
   @NonNull
-  public final TextView sendMessageText;
+  public final LinearLayout receivedChatView;
 
-  private SendBinding(@NonNull RelativeLayout rootView, @NonNull TextView sendMessageText) {
+  @NonNull
+  public final TextView receivedMsg;
+
+  @NonNull
+  public final LinearLayout sendChatView;
+
+  @NonNull
+  public final TextView sendMsg;
+
+  private SendBinding(@NonNull RelativeLayout rootView, @NonNull LinearLayout receivedChatView,
+      @NonNull TextView receivedMsg, @NonNull LinearLayout sendChatView,
+      @NonNull TextView sendMsg) {
     this.rootView = rootView;
-    this.sendMessageText = sendMessageText;
+    this.receivedChatView = receivedChatView;
+    this.receivedMsg = receivedMsg;
+    this.sendChatView = sendChatView;
+    this.sendMsg = sendMsg;
   }
 
   @Override
@@ -54,13 +69,32 @@ public final class SendBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
-      id = R.id.send_message_text;
-      TextView sendMessageText = ViewBindings.findChildViewById(rootView, id);
-      if (sendMessageText == null) {
+      id = R.id.received_chat_view;
+      LinearLayout receivedChatView = ViewBindings.findChildViewById(rootView, id);
+      if (receivedChatView == null) {
         break missingId;
       }
 
-      return new SendBinding((RelativeLayout) rootView, sendMessageText);
+      id = R.id.receivedMsg;
+      TextView receivedMsg = ViewBindings.findChildViewById(rootView, id);
+      if (receivedMsg == null) {
+        break missingId;
+      }
+
+      id = R.id.send_chat_view;
+      LinearLayout sendChatView = ViewBindings.findChildViewById(rootView, id);
+      if (sendChatView == null) {
+        break missingId;
+      }
+
+      id = R.id.sendMsg;
+      TextView sendMsg = ViewBindings.findChildViewById(rootView, id);
+      if (sendMsg == null) {
+        break missingId;
+      }
+
+      return new SendBinding((RelativeLayout) rootView, receivedChatView, receivedMsg, sendChatView,
+          sendMsg);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
