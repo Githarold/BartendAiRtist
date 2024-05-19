@@ -99,6 +99,7 @@ class select : AppCompatActivity() {
         cocktailNameView.text = name
 
         val selectBtn = findViewById<Button>(R.id.select_cocktail)
+        
 
         selectBtn.setOnClickListener {
             synchronized(this) {
