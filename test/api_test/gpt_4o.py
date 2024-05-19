@@ -82,15 +82,18 @@ while True:
     """,
     )
 
+    recipe_string = None
     if run.status == 'completed': 
         # 가장 최근의 메시지만 가져옵니다.
         message = client.beta.threads.messages.list(thread_id=thread.id, order="desc", limit=1)
         if message.data:
             content_block = message.data[0].content[0]  # 가장 최근의 메시지의 첫 번째 content block
             if content_block.type == 'text':
-                # print(content_block.text.value)
-                recommend_reason, recipe_string = content_block.text.value.split('@')
-                print(recommend_reason)
+                try:
+                    recommend_reason, recipe_string = content_block.text.value.split('@')
+                    print(recommend_reason)
+                except ValueError:
+                    print(f"Invalid Response: {content_block.text.value}")
                 print(f"Elapsed time: {time.time() - start_time}")
     else:
         print(f"Run Status: {run.status}")
@@ -98,7 +101,13 @@ while True:
     print()
 
 def adjust_pumps(recipe_string):
-    recipe = ast.literal_eval(recipe_string)
+    try:
+        recipe = ast.literal_eval(recipe_string)
+    except (SyntaxError, ValueError) as e:
+        print(recipe_string)
+        print(f"레시피 파싱 오류: {e}")
+        return None
+
     total_pumps = sum(recipe[1].values())
     target_pumps = 7
     if total_pumps > target_pumps:
@@ -112,4 +121,7 @@ def adjust_pumps(recipe_string):
     else:
         return recipe
 
-print(adjust_pumps(recipe_string))
+# Recipe adjustment example
+adjusted_recipe = adjust_pumps(recipe_string)
+if adjusted_recipe:
+    print(adjusted_recipe)
