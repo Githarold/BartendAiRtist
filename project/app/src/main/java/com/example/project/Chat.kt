@@ -219,7 +219,7 @@ class Chat : AppCompatActivity() {
                 val recipeString = parts[1]
                 addResponse(recommendReason)
             } else {
-                addResponse(messageText)
+                addResponse("Invalid Response: $messageText")
             }
         }else{
             addResponse("Err.. Try again")
