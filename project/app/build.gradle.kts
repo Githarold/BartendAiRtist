@@ -47,9 +47,26 @@ dependencies {
     implementation(libs.material)
     implementation(libs.androidx.activity)
     implementation(libs.androidx.constraintlayout)
-    implementation(libs.okhttp)
     implementation(libs.gson)
+    implementation(libs.ktor.client.okhttp)
+    implementation(libs.openai.client)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
 }
+
+android {
+    packaging {
+        exclude("META-INF/kotlinx-io.kotlin_module")
+        exclude("META-INF/atomicfu.kotlin_module")
+        exclude("META-INF/kotlinx-coroutines-io.kotlin_module")
+        exclude("META-INF/kotlinx-coroutines-core.kotlin_module")
+        exclude("META-INF/DEPENDENCIES")
+    }
+}
+
+//kotlin {
+//    jvmToolchain {
+//        languageVersion.set(JavaLanguageVersion.of(8))
+//    }
+//}
