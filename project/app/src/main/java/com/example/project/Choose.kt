@@ -52,15 +52,5 @@ class Choose : AppCompatActivity() {
         backBtn.setOnClickListener {
             finish()
         }
-        
-
-//        val btn = findViewById<Button>(R.id.button)
-//        btn.setOnClickListener {
-//            val fileContent = readTextFile(this, R.raw.a)
-//            val intent = Intent(this, select::class.java).apply {
-//                putExtra("fileContent", fileContent)
-//            }
-//            startActivity(intent)
-//        }
     }
 }
