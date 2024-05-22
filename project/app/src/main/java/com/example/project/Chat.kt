@@ -1,3 +1,7 @@
+/**
+ * Chat.kt
+ * OpenAI API를 사용하여 칵테일 레시피를 추천하는 챗봇 기능을 구현한 액티비티
+ */
 package com.example.project
 
 import android.os.Bundle
@@ -38,6 +42,7 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.api.run.RunRequest
 import com.aallam.openai.api.thread.ThreadId
 import kotlinx.coroutines.*
+import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
 class Chat : AppCompatActivity() {
@@ -79,9 +84,21 @@ class Chat : AppCompatActivity() {
 
     }
 
+
+
+
+    /**
+     * 함수 정의 부분
+     */
+
+    // 메시지를 보내는 함수
     fun sendMessage(){
         val question = message_edit!!.getText().toString().trim { it <= ' ' }
         addToChat(question, Message.SENT_BY_ME)
+//        if (question == "q"){
+//            val result = adjustPumps(Companion.recipeString)
+//            println(result)
+//        }
         CoroutineScope(Dispatchers.Main).launch {
             callAPI(question)
         }
@@ -89,6 +106,7 @@ class Chat : AppCompatActivity() {
         tv_welcome!!.setVisibility(View.GONE)
     }
 
+    // 채팅 메시지를 추가하는 함수
     fun addToChat(message: String?, sentBy: String?) {
         runOnUiThread {
             messageList!!.add(Message(message, sentBy))
@@ -97,16 +115,20 @@ class Chat : AppCompatActivity() {
         }
     }
 
+    // 응답 메시지를 추가하는 함수
     fun addResponse(response: String?) {
         messageList!!.removeAt(messageList!!.size - 1)
         addToChat(response, Message.SENT_BY_BOT)
     }
 
+    // OpenAI API를 호출, 사용자 입력에 부합하는 칵테일을 추천한 뒤
+    // addResponse 함수를 호출해 응답 메시지로 추가하는 함수
     @OptIn(BetaOpenAI::class)
     suspend fun callAPI(question: String?){
         messageList!!.add(Message("...", Message.SENT_BY_BOT))
-
         val openai = OpenAI( token = MY_SECRET_KEY)
+        val real_user_mood = question
+
         // Few-shot Learning을 위한 예시 입력 선언
         val exampleInputDict = mapOf(
             "Vodka" to 700, "Rum" to 700, "Gin" to 700, "Diluted Lemon Juice" to 1000,
@@ -117,7 +139,6 @@ class Chat : AppCompatActivity() {
             "Vodka" to 1000, "Rum" to 700, "Gin" to 800, "Diluted Lemon Juice" to 800,
             "Triple Sec" to 500, "Cranberry Juice" to 900, "Grapefruit Juice" to 1000, "Orange Juice" to 800
         )
-
 
         val exampleUserMood1 = "오늘따라 뭔가 시원하고 달콤한 칵테일이 마시고 싶어. 피로도 풀리고 기분도 좋아지는 그런 종류로."
         val exampleGptResponse1 = "그런 기분에 딱 맞는 칵테일로 '모히토'를 추천드릴게요. 신선한 민트와 라임이 들어가 상큼하고 시원한 맛이 특징이랍니다. 럼 주를 기반으로 해서 달콤한 맛도 느끼실 수 있고요.@[{'Rum': 1, 'Diluted Lemon Juice': 2, 'Orange Juice': 3}, {'Rum': 2, 'Diluted Lemon Juice': 3, 'Orange Juice': 4}]"
@@ -153,8 +174,7 @@ class Chat : AppCompatActivity() {
         val thread = openai.thread()
         println(thread.id)
 
-        val real_user_mood = question
-        
+        // 사용자 입력을 Thread에 전송
         openai.message(
             threadId = thread.id,
             request = MessageRequest(
@@ -163,6 +183,7 @@ class Chat : AppCompatActivity() {
             )
         )
 
+        // Thread에 있는 메시지 확인
         val messages = openai.messages(thread.id)
         println("List of messages in the thread:")
         for (message in messages) {
@@ -170,6 +191,7 @@ class Chat : AppCompatActivity() {
             println(textContent.text.value)
         }
 
+        // AI 바텐더에게 실행 요청
         val run = openai.createRun(
                 threadId = thread.id,
                 request = RunRequest(
@@ -201,11 +223,16 @@ class Chat : AppCompatActivity() {
                                             """.trimIndent())
             )
 
+        // 실행 결과가 완료될 때까지 대기
         do {
             delay(1500)
             val retrievedRun = openai.getRun(threadId = thread.id, runId = run.id)
+            if (retrievedRun.status != Status.Completed) {
+                addResponse("Run Status: ${retrievedRun.status}")
+            }
         } while (retrievedRun.status != Status.Completed)
 
+        // AI 바텐더의 응답 메시지 처리
         val assistantMessages = openai.messages(thread.id)
         val message = assistantMessages[0]
         val textContent = message.content.first() as? MessageContent.Text ?: error("Expected MessageContent.Text")
@@ -219,7 +246,7 @@ class Chat : AppCompatActivity() {
                 val recipeString = parts[1]
                 addResponse(recommendReason)
             } else {
-                addResponse(messageText)
+                addResponse("Invalid Response: $messageText")
             }
         }else{
             addResponse("Err.. Try again")
@@ -228,9 +255,44 @@ class Chat : AppCompatActivity() {
 
     }
 
+    fun adjustPumps(recipeString: String?): Pair<String, Map<String, Int>>? {
+        try {
+            val recipe = recipeString!!.removeSurrounding("(", ")").split(", ") // 문자열을 분해하여 파싱
+            val recipeName = recipe[0].removeSurrounding("'")
+            val ingredientsAndPumps = recipe[1].removeSurrounding("{", "}")
+                .split(", ")
+                .associate {
+                    val (ingredient, pumps) = it.split(": ")
+                    ingredient.removeSurrounding("'") to pumps.toInt()
+                }
 
+            val totalPumps = ingredientsAndPumps.values.sum()
+            val targetPumps = 7
+
+            if (totalPumps > targetPumps) {
+                addResponse("Adjusting recipe...")
+                addResponse("Original recipe: $ingredientsAndPumps")
+
+                val adjustmentRatio = targetPumps.toDouble() / totalPumps
+                val adjustedPumps = ingredientsAndPumps.mapValues { (_, pumps) ->
+                    (pumps * adjustmentRatio).roundToInt()
+                }
+
+                addResponse("Adjusted recipe: $adjustedPumps")
+                return Pair(recipeName, adjustedPumps)
+            } else {
+                return Pair(recipeName, ingredientsAndPumps)
+            }
+        } catch (e: Exception) {
+            addResponse("레시피 파싱 오류: $e")
+            return null
+        }
+    }
+
+    // 클래스 레벨에서 접근 가능한 객체 멤버 선언
     companion object {
         val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
         private const val MY_SECRET_KEY = ""
+        var recipeString: String? = null
     }
 }

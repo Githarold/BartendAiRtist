@@ -1,3 +1,7 @@
+/**
+ * MessageAdapter.kt
+ * 앱에서 채팅 메시지를 표시하기 위한 RecyclerView 어댑터 클래스
+ */
 package com.example.project
 
 import android.view.LayoutInflater
