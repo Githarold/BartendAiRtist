@@ -182,6 +182,6 @@ void disk_rotate(int disk_step) {
     }
     else {
         // 유효하지 않은 입력일 경우 아무 작업도 수행하지 않음
-        Serial.println("Invalid input for disk_step. No action performed.");
+        
     }
 }
