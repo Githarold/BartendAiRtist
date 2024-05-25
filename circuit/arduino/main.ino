@@ -1,3 +1,6 @@
+
+
+
 #include <Arduino.h>
 #include "step.h"
 #include "linear.h"
@@ -13,7 +16,9 @@ int listSize = 0;  // 실제 사용되는 리스트의 크기
 
 
 int dc_motor_state = 0;  // 전역 변수로 선언
-bool stop_command_received = false; // stop 명령 수신 여부
+int stop_command_state = 0; // 0: 초기 상태, 1: stop 명령 수신, 2: 엔드스위치 감지
+
+
 
 
 void setup() {
@@ -48,17 +53,31 @@ void loop() {
        
         // stop 명령을 수신한 경우
         if (data == "stop") {
-            stopMotor();
+            disk_rotate(0);
             Serial.println("MOTOR STOPPED");
-            stop_command_received = true; // 플래그 설정
+            stop_command_state = 2; // 플래그 설정
         } else {
             parseData(data);  // 데이터 파싱 함수 호출
+            stop_command_state = 1;
         }
     }
 
 
-    // stop 명령을 받은 후 음료 만드는 로직 실행
-    if (stop_command_received) {
+    // stop 명령을 받은 후 엔드스위치에 도달할 때까지 모터를 반시계방향으로 회전
+    if (stop_command_state == 1) {
+        softStart(0);
+       
+        // 외부에서 stop_command_received를 true로 설정하는 코드가 필요합니다.
+        if (stop_command_state == 2) { // 엔드스위치가 눌렸음을 시뮬레이션
+            disk_rotate(0);
+            Serial.println("ENDSTOP DETECTED");
+            stop_command_state = 2; // 엔드스위치 감지 상태로 변경
+        }
+    }
+
+
+    // 엔드스위치 감지 후 음료 만드는 로직 실행
+    if (stop_command_state == 2) {
         // 모터 작동 로직 실행
         for (int i = 0; i < listSize; i++) {
             disk_rotate(disk_rotate_list[i]);
@@ -74,7 +93,7 @@ void loop() {
 
 
         if (dc_motor_state == 1) {
-            stir(63, 50, 2);
+            stir(200, 100, 2);
             delay(1000);
         }
 
@@ -83,39 +102,8 @@ void loop() {
 
 
         // 음료 만들기 완료 후 초기화
-        stop_command_received = false; // 플래그 리셋
-    } else {
-        // 엔드스위치에 도달할 때까지 모터를 반시계방향으로 회전
-        rotateCounterClockwise();
+        stop_command_state = 0; // 플래그 리셋
     }
-}
-
-
-
-
-// 모터를 반시계방향으로 회전시키는 함수
-void rotateCounterClockwise() {
-    digitalWrite(IN1[0], HIGH);
-    digitalWrite(IN2[0], LOW);
-    digitalWrite(IN3[0], LOW);
-    digitalWrite(IN4[0], HIGH);
-    delay(10);  // 모터 속도 조절을 위한 딜레이
-
-
-    digitalWrite(IN1[0], LOW);
-    digitalWrite(IN2[0], HIGH);
-    digitalWrite(IN3[0], HIGH);
-    digitalWrite(IN4[0], LOW);
-    delay(10);  // 모터 속도 조절을 위한 딜레이
-}
-
-
-// 모터를 멈추는 함수
-void stopMotor() {
-    digitalWrite(ENA[0], LOW);
-    digitalWrite(ENB[0], LOW);
-    digitalWrite(ENA[1], LOW);
-    digitalWrite(ENB[1], LOW);
 }
 
 
@@ -162,7 +150,3 @@ void parseData(String data) {
     }
     dispenser_push_list[dispenserCount] = dispenserData.substring(startPos).toInt();  // 마지막 원소 처리
 }
-
-
-
-
