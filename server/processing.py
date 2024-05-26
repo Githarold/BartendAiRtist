@@ -14,7 +14,8 @@ class protocol_1(threading.Thread):
     
     def run(self):
         print(self.cocktail_src)
-        self.socket.sendall("hello world")
+        data=list2string(self.cocktail_src)
+        self.socket.sendall(data)
         self.socket.close()
 
 class protocol_2(threading.Thread):
@@ -29,11 +30,12 @@ class protocol_2(threading.Thread):
     def run(self):
         if self.sema.acquire(blocking=False):
             print("만드는 중(스터링)")
-            self.cocktail_src[1]-=self.data.content[1]
+            for i in range(8):
+                self.cocktail_src[i]-=self.data.content[i]
             list_json(self.cocktail_src, PATH)            
             step_list, lin_list=protocol2serial(self.data)
-            send_data_to_arduino(1,step_list, lin_list)
-            # time.sleep(5)
+            # send_data_to_arduino(1,step_list, lin_list)
+            time.sleep(5)
             print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall("ang")
@@ -56,11 +58,12 @@ class protocol_3(threading.Thread):
     def run(self):
         if self.sema.acquire(blocking=False):
             print("만드는 중(빌드)")
-            self.cocktail_src[1]-=self.data.content[1]
+            for i in range(8):
+                self.cocktail_src[i]-=self.data.content[i]
             list_json(self.cocktail_src, PATH)
             step_list, lin_list=protocol2serial(self.data)
-            send_data_to_arduino(0,step_list, lin_list)
-            # time.sleep(5)
+            # send_data_to_arduino(0,step_list, lin_list)
+            time.sleep(5)
             print(step_list,lin_list)
             print(self.cocktail_src)
             self.socket.sendall("gimo ddi")
@@ -83,10 +86,10 @@ class protocol_4(threading.Thread):
     def run(self):
         if self.sema.acquire(blocking=False):
             print("추가")
-            self.cocktail_src[1]+=self.data.content[1]
+            self.cocktail_src=self.data.content
             list_json(self.cocktail_src, PATH)
             print(self.cocktail_src)
-            self.socket.sendall("cnrk")
+            self.socket.sendall("추가vv")
             self.socket.close()
             self.sema.release()
         else:
