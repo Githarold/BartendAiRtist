@@ -270,7 +270,8 @@ class Chat : AppCompatActivity() {
             val targetPumps = 7
 
             if (totalPumps > targetPumps) {
-                addResponse("Adjusting recipe...")
+                addResponse("Adjusting" +
+                        " recipe...")
                 addResponse("Original recipe: $ingredientsAndPumps")
 
                 val adjustmentRatio = targetPumps.toDouble() / totalPumps

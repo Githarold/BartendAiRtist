@@ -6,24 +6,67 @@
 
 package com.example.project
 
+import android.Manifest
 import android.content.Intent
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothSocket
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
+import java.io.OutputStream
 import java.net.Socket
+import java.util.UUID
 
 class SetBuildOrder : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?){
+    private val REQUEST_ENABLE_BT = 1
+    private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private val SERVER_DEVICE_ADDRESS = "DC:A6:32:7B:03:9F"  // 서버 기기의 MAC 주소를 입력해야 합니다. 라즈베리파이
+    private val SERVER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")  // SPP UUID
+    private lateinit var bluetoothSocket: BluetoothSocket
+    private var isCommunicating = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_setbuildorder)
+
+        // 블루투스 권한 요청
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
+                BLUETOOTH_PERMISSION_REQUEST_CODE
+            )
+        }
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            Log.e("Bluetooth", "Device doesn't support Bluetooth")
+            return
+        }
+
+        // 블루투스 활성화 요청
+        if (!bluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
+
 
         // 시스템 바 인셋 적용
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -58,43 +101,86 @@ class SetBuildOrder : AppCompatActivity() {
             val ingredientOrderList = getIngredientOrderList(currentList)
             val formattedDataList = getIngredientQuantityList(receivedList)
             val formattedData = formatDataForCommunicationWithOrder(formattedDataList, ingredientOrderList)
-            connectToServer(formattedData)
+            Log.d("formattedData", formattedData)
+            sendData(formattedData)
         }
     }
+
 
 
     /**
      * 함수 정의 부분
      */
-    private fun  connectToServer(dataToSend:String){
+    fun sendData(data: String){
+        synchronized(this) {
+            if (isCommunicating) {
+                Log.d("Bluetooth", "Communication is already in progress.")
+                return@synchronized
+            }
+            isCommunicating = true
+        }
+
         Thread {
+            var isConnected = false
             try {
-                val socket = Socket("10.0.2.2", 3000)
-                socket.use { s ->
-                    val outStream = s.outputStream
-                    val inStream = s.inputStream
+                val device = bluetoothAdapter.getRemoteDevice(SERVER_DEVICE_ADDRESS)
+                if (ActivityCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.BLUETOOTH_CONNECT
+                    ) != PackageManager.PERMISSION_GRANTED
+                ) {
+                    ActivityCompat.requestPermissions(
+                        this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
+                        BLUETOOTH_PERMISSION_REQUEST_CODE)
+                }
+                bluetoothSocket = device.createRfcommSocketToServiceRecord(SERVER_UUID)
+                bluetoothSocket.connect()
+                isConnected = true
 
-                    val data = dataToSend
-                    outStream.write(data.toByteArray())
+                val outStream: OutputStream = bluetoothSocket.outputStream
+                val inStream = bluetoothSocket.inputStream
 
-                    // 데이터 수신을 위한 버퍼 준비
-                    val dataArr = ByteArray(1024)
-                    val numBytes = inStream.read(dataArr)
-                    if (numBytes != -1) {
-                        val receivedData = String(dataArr, 0, numBytes)
-                        runOnUiThread {
-                            println("data : $receivedData")
-                        }
-                    } else {
-                        println("No data received")
+                val data = data
+                outStream.write(data.toByteArray())
+                Log.d("Bluetooth", "Data sent: $data")
+
+                // 수신 버퍼 설정
+                val buffer = ByteArray(1024)
+                val bytesRead = inStream.read(buffer)
+                if (bytesRead == -1) {
+                    Log.d("Bluetooth", "Peer socket closed")
+                } else {
+                    val receivedData = String(buffer, 0, bytesRead)
+                    Log.d("Bluetooth", "Data received: $receivedData")
+
+                    runOnUiThread{
+                        Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
                     }
                 }
+
             } catch (e: IOException) {
                 e.printStackTrace()
+            } finally {
+                if (isConnected) {
+                    try {
+                        bluetoothSocket.close()  // 소켓을 안전하게 닫습니다.
+                        Log.d("Bluetooth", "Socket closed")
+                    } catch (e: IOException) {
+                        e.printStackTrace()
+                    }
+                }
+                synchronized(this) {
+                    isCommunicating = false
+                }
             }
         }.start()
     }
 }
+
+
+    /**
+     * 함수 정의 부분
+     */
 
 // 빌드 순서를 내용으로 하는 리스트를 만드는 함수
 fun getIngredientOrderList(currentList: List<Ingredient>): String {
