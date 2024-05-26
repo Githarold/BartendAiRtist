@@ -30,15 +30,19 @@ public final class ActivityCustomBinding implements ViewBinding {
   public final LinearLayout main;
 
   @NonNull
+  public final AppCompatButton noticeBtn;
+
+  @NonNull
   public final AppCompatButton selectBtn;
 
   private ActivityCustomBinding(@NonNull LinearLayout rootView, @NonNull AppCompatButton backBtn,
       @NonNull RecyclerView cocktailIngredientsList, @NonNull LinearLayout main,
-      @NonNull AppCompatButton selectBtn) {
+      @NonNull AppCompatButton noticeBtn, @NonNull AppCompatButton selectBtn) {
     this.rootView = rootView;
     this.backBtn = backBtn;
     this.cocktailIngredientsList = cocktailIngredientsList;
     this.main = main;
+    this.noticeBtn = noticeBtn;
     this.selectBtn = selectBtn;
   }
 
@@ -83,6 +87,12 @@ public final class ActivityCustomBinding implements ViewBinding {
 
       LinearLayout main = (LinearLayout) rootView;
 
+      id = R.id.noticeBtn;
+      AppCompatButton noticeBtn = ViewBindings.findChildViewById(rootView, id);
+      if (noticeBtn == null) {
+        break missingId;
+      }
+
       id = R.id.selectBtn;
       AppCompatButton selectBtn = ViewBindings.findChildViewById(rootView, id);
       if (selectBtn == null) {
@@ -90,7 +100,7 @@ public final class ActivityCustomBinding implements ViewBinding {
       }
 
       return new ActivityCustomBinding((LinearLayout) rootView, backBtn, cocktailIngredientsList,
-          main, selectBtn);
+          main, noticeBtn, selectBtn);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));
