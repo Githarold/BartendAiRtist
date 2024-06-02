@@ -36,7 +36,7 @@ class Dev : AppCompatActivity() {
     private val REQUEST_ENABLE_BT = 1
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
-    private val SERVER_DEVICE_ADDRESS = "DC:A6:32:7B:03:9F"  // 서버 기기의 MAC 주소를 입력해야 합니다. 라즈베리파이
+    private val SERVER_DEVICE_ADDRESS = "DC:A6:32:7B:04:EC"  // 서버 기기의 MAC 주소를 입력해야 합니다. 라즈베리파이
     private val SERVER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")  // SPP UUID
     private lateinit var bluetoothSocket: BluetoothSocket
     private var isCommunicating = false

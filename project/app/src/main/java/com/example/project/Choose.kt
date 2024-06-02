@@ -25,7 +25,7 @@ class Choose : AppCompatActivity() {
         val recyclerView: RecyclerView = findViewById(R.id.cocktail_list)
         val cocktail_names = listOf(
             "matini",
-            "ginfizz",
+            "sea_breeze",
             "gintonic",
             "orangeblossom",
             "paradise",
