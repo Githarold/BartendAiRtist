@@ -1,9 +1,9 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-53:12
-INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-53:12
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-58:12
+INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:2:1-58:12
 MERGED from [androidx.databinding:viewbinding:8.3.0] C:\Users\seongbin\.gradle\caches\transforms-3\93f9f3bccce7ba7631874f27326de6b3\transformed\viewbinding-8.3.0\AndroidManifest.xml:2:1-7:12
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\seongbin\.gradle\caches\transforms-3\6ad6025865573fc578cc3e0d1a86acf4\transformed\material-1.11.0\AndroidManifest.xml:17:1-24:12
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\seongbin\.gradle\caches\transforms-3\4871e812ee3d19177e35546b05b1423a\transformed\constraintlayout-2.1.4\AndroidManifest.xml:2:1-11:12
@@ -64,17 +64,33 @@ uses-permission#android.permission.BLUETOOTH_ADMIN
 ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:6:5-73
 	android:name
 		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:6:22-71
+uses-permission#android.permission.BLUETOOTH_SCAN
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:7:5-96
+	android:required
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:7:71-94
+	android:name
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:7:22-70
 uses-permission#android.permission.BLUETOOTH_CONNECT
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:7:5-75
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:8:5-99
+	android:required
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:8:74-97
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:7:22-73
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:8:22-73
+uses-permission#android.permission.ACCESS_FINE_LOCATION
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:9:5-78
+	android:name
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:9:22-76
+uses-permission#android.permission.ACCESS_COARSE_LOCATION
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:10:5-80
+	android:name
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:10:22-78
 uses-permission#android.permission.INTERNET
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:8:5-66
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:11:5-67
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:8:22-64
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:11:22-64
 application
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:11:5-51:19
-INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:11:5-51:19
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:13:5-56:19
+INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:13:5-56:19
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\seongbin\.gradle\caches\transforms-3\6ad6025865573fc578cc3e0d1a86acf4\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [com.google.android.material:material:1.11.0] C:\Users\seongbin\.gradle\caches\transforms-3\6ad6025865573fc578cc3e0d1a86acf4\transformed\material-1.11.0\AndroidManifest.xml:22:5-20
 MERGED from [androidx.constraintlayout:constraintlayout:2.1.4] C:\Users\seongbin\.gradle\caches\transforms-3\4871e812ee3d19177e35546b05b1423a\transformed\constraintlayout-2.1.4\AndroidManifest.xml:9:5-20
@@ -96,81 +112,87 @@ MERGED from [androidx.versionedparcelable:versionedparcelable:1.1.1] C:\Users\se
 	android:appComponentFactory
 		ADDED from [androidx.core:core:1.12.0] C:\Users\seongbin\.gradle\caches\transforms-3\b2a6ba843d914d06d5c5c4b5238ee57e\transformed\core-1.12.0\AndroidManifest.xml:28:18-86
 	android:supportsRtl
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:18:9-35
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:20:9-35
 	android:label
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:16:9-41
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:18:9-41
 	android:fullBackupContent
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:14:9-54
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:16:9-54
 	android:roundIcon
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:17:9-54
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:19:9-54
 	tools:targetApi
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:20:9-29
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:22:9-29
 	android:icon
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:15:9-43
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:17:9-43
 	android:allowBackup
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:12:9-35
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:14:9-35
 	android:theme
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:19:9-45
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:21:9-45
 	android:dataExtractionRules
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:13:9-65
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:15:9-65
+activity#com.example.project.Pairing
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:23:9-25:40
+	android:exported
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:25:13-37
+	android:name
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:24:13-36
 activity#com.example.project.Dev
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:21:9-23:40
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:26:9-28:40
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:23:13-37
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:28:13-37
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:22:13-32
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:27:13-32
 activity#com.example.project.Custom
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:24:9-26:40
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:29:9-31:40
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:26:13-37
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:31:13-37
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:25:13-35
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:30:13-35
 activity#com.example.project.select
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:27:9-29:40
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:32:9-34:40
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:29:13-37
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:34:13-37
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:28:13-35
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:33:13-35
 activity#com.example.project.Chat
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:30:9-32:40
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:35:9-37:40
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:32:13-37
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:37:13-37
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:31:13-33
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:36:13-33
 activity#com.example.project.Choose
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:33:9-35:40
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:38:9-40:40
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:35:13-37
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:40:13-37
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:34:13-35
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:39:13-35
 activity#com.example.project.ChooseCustomMethod
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:36:9-38:40
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:41:9-43:40
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:38:13-37
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:43:13-37
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:37:13-47
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:42:13-47
 activity#com.example.project.SetBuildOrder
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:39:9-41:40
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:44:9-46:40
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:41:13-37
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:46:13-37
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:40:13-42
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:45:13-42
 activity#com.example.project.MainActivity
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:42:9-50:20
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:47:9-55:20
 	android:exported
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:44:13-36
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:49:13-36
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:43:13-41
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:48:13-41
 intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:45:13-49:29
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:50:13-54:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:46:17-69
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:51:17-69
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:46:25-66
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:51:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:48:17-77
+ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:53:17-77
 	android:name
-		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:48:27-74
+		ADDED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml:53:27-74
 uses-sdk
 INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml reason: use-sdk injection requested
 INJECTED from C:\Users\seongbin\AndroidStudioProjects\BartendAiRtist\project\app\src\main\AndroidManifest.xml
