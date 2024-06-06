@@ -18,16 +18,14 @@ import androidx.core.view.WindowInsetsCompat
 import com.example.project.Pairing.Companion.selectedDeviceAddress
 import java.io.IOException
 import java.io.OutputStream
-import java.util.UUID
 
 class MainActivity : AppCompatActivity() {
     private val REQUEST_ENABLE_BT = 1
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
-    private var SERVER_DEVICE_ADDRESS: String? = null  // 서버 기기의 MAC 주소를 나중에 설정합니다.
-    private val SERVER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")  // SPP UUID
-    private var bluetoothSocket: BluetoothSocket? = null
+    private var SERVER_DEVICE_ADDRESS: String? = null
     private var isCommunicating = false
+    private var communicationThread: Thread? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,7 +37,6 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        // 블루투스 권한 요청
         if (ContextCompat.checkSelfPermission(
                 this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(
@@ -52,7 +49,6 @@ class MainActivity : AppCompatActivity() {
             return
         }
 
-        // 버튼 이벤트 설정
         findViewById<Button>(R.id.chooseBtn).setOnClickListener {
             startActivity(Intent(this, Choose::class.java))
         }
@@ -71,8 +67,7 @@ class MainActivity : AppCompatActivity() {
         val devBtn = findViewById<Button>(R.id.devBtn)
 
         devBtn.setOnClickListener {
-            Log.d("Bluetooth", "Communication is already in progress.$SERVER_DEVICE_ADDRESS")
-            SERVER_DEVICE_ADDRESS = selectedDeviceAddress  // 최신 값을 가져옵니다.
+            SERVER_DEVICE_ADDRESS = selectedDeviceAddress
             if (SERVER_DEVICE_ADDRESS == null) {
                 Toast.makeText(this, "No device selected", Toast.LENGTH_SHORT).show()
                 return@setOnClickListener
@@ -86,17 +81,14 @@ class MainActivity : AppCompatActivity() {
                 isCommunicating = true
             }
 
-            Thread {
-                var isConnected = false
+            communicationThread = Thread {
                 try {
-                    val device = bluetoothAdapter.getRemoteDevice(SERVER_DEVICE_ADDRESS)
-                    bluetoothSocket?.close()  // 이전 소켓을 닫습니다.
-                    bluetoothSocket = device.createRfcommSocketToServiceRecord(SERVER_UUID)
-                    bluetoothSocket?.connect()
-                    isConnected = true
-
-                    val outStream: OutputStream = bluetoothSocket!!.outputStream
-                    val inStream = bluetoothSocket!!.inputStream
+                    val socket = BluetoothManager.getBluetoothSocket()
+                    if (socket == null || !socket.isConnected) {
+                        val device = bluetoothAdapter.getRemoteDevice(SERVER_DEVICE_ADDRESS)
+                        BluetoothManager.connectToDevice(this, device)
+                    }
+                    val outStream: OutputStream = BluetoothManager.getBluetoothSocket()!!.outputStream
 
                     val data = "1"
                     outStream.write(data.toByteArray())
@@ -104,6 +96,7 @@ class MainActivity : AppCompatActivity() {
 
                     // 수신 버퍼 설정
                     val buffer = ByteArray(1024)
+                    val inStream = BluetoothManager.getBluetoothSocket()!!.inputStream
                     val bytesRead = inStream.read(buffer)
                     if (bytesRead == -1) {
                         Log.d("Bluetooth", "Peer socket closed")
@@ -119,31 +112,36 @@ class MainActivity : AppCompatActivity() {
                             startActivity(intent)
                         }
                     }
-
                 } catch (e: IOException) {
                     e.printStackTrace()
                     runOnUiThread {
                         Toast.makeText(this, "Connection failed: ${e.message}", Toast.LENGTH_SHORT).show()
                     }
                 } finally {
-                    if (isConnected) {
-                        try {
-                            bluetoothSocket?.close()  // 소켓을 안전하게 닫습니다.
-                            Log.d("Bluetooth", "Socket closed")
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
                     synchronized(this) {
                         isCommunicating = false
                     }
+                    communicationThread?.interrupt()
                 }
-            }.start()
+            }
+            communicationThread?.start()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        SERVER_DEVICE_ADDRESS = selectedDeviceAddress  // 최신 값을 가져옵니다.
+        SERVER_DEVICE_ADDRESS = selectedDeviceAddress
+    }
+
+    override fun onPause() {
+        super.onPause()
+        // 스레드를 중지합니다.
+        communicationThread?.interrupt()
+    }
+
+    override fun onDestroy() {
+        super.onDestroy()
+        // 스레드를 중지합니다.
+        communicationThread?.interrupt()
     }
 }

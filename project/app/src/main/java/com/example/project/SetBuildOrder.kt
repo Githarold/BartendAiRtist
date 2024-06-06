@@ -1,15 +1,9 @@
-/**
- * SetBuildOrder.kt
- * 사용자에게 빌드 순서를 정하게 하는 액티비티
- * 드래그 앤 드롭으로 빌드 순서를 결정한 뒤 서버에 데이터를 보낸다
- */
-
 package com.example.project
 
 import android.Manifest
-import android.content.Intent
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
@@ -26,16 +20,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
 import java.io.OutputStream
-import java.net.Socket
-import java.util.UUID
 
 class SetBuildOrder : AppCompatActivity() {
     private val REQUEST_ENABLE_BT = 1
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
-    private val SERVER_DEVICE_ADDRESS = "DC:A6:32:7B:04:EC"  // 서버 기기의 MAC 주소를 입력해야 합니다. 라즈베리파이
-    private val SERVER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")  // SPP UUID
-    private lateinit var bluetoothSocket: BluetoothSocket
     private var isCommunicating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -66,7 +55,6 @@ class SetBuildOrder : AppCompatActivity() {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
-
 
         // 시스템 바 인셋 적용
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -106,12 +94,10 @@ class SetBuildOrder : AppCompatActivity() {
         }
     }
 
-
-
     /**
      * 함수 정의 부분
      */
-    fun sendData(data: String){
+    fun sendData(data: String) {
         synchronized(this) {
             if (isCommunicating) {
                 Log.d("Bluetooth", "Communication is already in progress.")
@@ -120,32 +106,23 @@ class SetBuildOrder : AppCompatActivity() {
             isCommunicating = true
         }
 
-        Thread {
-            var isConnected = false
+        val communicationThread = Thread {
             try {
-                val device = bluetoothAdapter.getRemoteDevice(SERVER_DEVICE_ADDRESS)
-                if (ActivityCompat.checkSelfPermission(
-                        this,
-                        Manifest.permission.BLUETOOTH_CONNECT
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
-                        BLUETOOTH_PERMISSION_REQUEST_CODE)
+                val socket = BluetoothManager.getBluetoothSocket()
+                if (socket == null || !socket.isConnected) {
+                    runOnUiThread {
+                        Toast.makeText(this, "Not connected to any device", Toast.LENGTH_SHORT).show()
+                    }
+                    return@Thread
                 }
-                bluetoothSocket = device.createRfcommSocketToServiceRecord(SERVER_UUID)
-                bluetoothSocket.connect()
-                isConnected = true
 
-                val outStream: OutputStream = bluetoothSocket.outputStream
-                val inStream = bluetoothSocket.inputStream
-
-                val data = data
+                val outStream: OutputStream = socket.outputStream
                 outStream.write(data.toByteArray())
                 Log.d("Bluetooth", "Data sent: $data")
 
                 // 수신 버퍼 설정
                 val buffer = ByteArray(1024)
+                val inStream = socket.inputStream
                 val bytesRead = inStream.read(buffer)
                 if (bytesRead == -1) {
                     Log.d("Bluetooth", "Peer socket closed")
@@ -153,7 +130,7 @@ class SetBuildOrder : AppCompatActivity() {
                     val receivedData = String(buffer, 0, bytesRead)
                     Log.d("Bluetooth", "Data received: $receivedData")
 
-                    runOnUiThread{
+                    runOnUiThread {
                         Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
                     }
                 }
@@ -161,26 +138,19 @@ class SetBuildOrder : AppCompatActivity() {
             } catch (e: IOException) {
                 e.printStackTrace()
             } finally {
-                if (isConnected) {
-                    try {
-                        bluetoothSocket.close()  // 소켓을 안전하게 닫습니다.
-                        Log.d("Bluetooth", "Socket closed")
-                    } catch (e: IOException) {
-                        e.printStackTrace()
-                    }
-                }
                 synchronized(this) {
                     isCommunicating = false
                 }
+                Thread.currentThread().interrupt()
             }
-        }.start()
+        }
+        communicationThread.start()
     }
 }
 
-
-    /**
-     * 함수 정의 부분
-     */
+/**
+ * 함수 정의 부분
+ */
 
 // 빌드 순서를 내용으로 하는 리스트를 만드는 함수
 fun getIngredientOrderList(currentList: List<Ingredient>): String {
@@ -197,9 +167,8 @@ fun getIngredientOrderList(currentList: List<Ingredient>): String {
     return stringBuilder.toString()
 }
 
-// 서버로 보내기 위해 데이터 형식을 알밪게 바꿔주는 함수
+// 서버로 보내기 위해 데이터 형식을 알맞게 바꿔주는 함수
 fun getIngredientQuantityList(ingredients: ArrayList<Ingredient>?): String {
-    //TODO
     val header = "3" // 순서 포함하므로 헤드 3
 
     val body = StringBuilder()
@@ -214,7 +183,7 @@ fun getIngredientQuantityList(ingredients: ArrayList<Ingredient>?): String {
     return "$header\n\n${body.toString()}"
 }
 
-// 서버로 보내기 위해 데이터 형식을 알밪게 바꿔주는 함수(순서 포함)
+// 서버로 보내기 위해 데이터 형식을 알맞게 바꿔주는 함수(순서 포함)
 fun formatDataForCommunicationWithOrder(receivedList: String, ingredientOrderList: String): String {
     val formattedData = StringBuilder()
 
