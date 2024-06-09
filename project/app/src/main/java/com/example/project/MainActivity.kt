@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity() {
                         Log.d("Bluetooth", "Data received: $receivedData")
 
                         runOnUiThread {
-                            Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(applicationContext, "DevOption", Toast.LENGTH_SHORT).show()
                             val intent = Intent(this@MainActivity, Dev::class.java).apply {
                                 putExtra("receivedData", receivedData)
                             }

@@ -110,8 +110,9 @@ class Pairing : AppCompatActivity() {
         deviceListView.setOnItemClickListener { _, _, position, _ ->
             val selectedDevice = deviceList[position]
             val deviceAddress = selectedDevice.split(" - ").last()
+            val deviceName = selectedDevice.split(" - ").first()
             selectedDeviceAddress = deviceAddress
-            Toast.makeText(this, "Connecting to: $deviceAddress", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Connecting to: $deviceName", Toast.LENGTH_SHORT).show()
             connectToDevice(deviceAddress)
         }
 
@@ -144,16 +145,17 @@ class Pairing : AppCompatActivity() {
         }
 
         val device = bluetoothAdapter.getRemoteDevice(deviceAddress)
+        val deviceName = device.name ?: "Unknown Device"
         Thread {
             val socket = BluetoothManager.connectToDevice(this, device)
             if (socket != null) {
                 BluetoothManager.setBluetoothSocket(socket)
                 runOnUiThread {
-                    Toast.makeText(this, "Connected to: $deviceAddress", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Connected to: $deviceName", Toast.LENGTH_SHORT).show()
                 }
             } else {
                 runOnUiThread {
-                    Toast.makeText(this, "Connection failed with: $deviceAddress", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(this, "Connection failed with: $deviceName", Toast.LENGTH_SHORT).show()
                 }
             }
         }.start()

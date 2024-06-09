@@ -2,7 +2,7 @@ package com.example.project
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothSocket
+import android.bluetooth.BluetoothDevice
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -19,7 +19,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
 import java.io.OutputStream
-import java.util.UUID
 
 class Dev : AppCompatActivity() {
     private var totalQuantity = 0
@@ -36,9 +35,6 @@ class Dev : AppCompatActivity() {
     private val REQUEST_ENABLE_BT = 1
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
-    private var SERVER_DEVICE_ADDRESS: String? = null  // 서버 기기의 MAC 주소를 입력해야 합니다. 라즈베리파이
-    private val SERVER_UUID = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB")  // SPP UUID
-    private lateinit var bluetoothSocket: BluetoothSocket
     private var isCommunicating = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -102,15 +98,16 @@ class Dev : AppCompatActivity() {
             }
 
             Thread {
-                var isConnected = false
                 try {
-                    val device = bluetoothAdapter.getRemoteDevice(SERVER_DEVICE_ADDRESS)
-                    bluetoothSocket = device.createRfcommSocketToServiceRecord(SERVER_UUID)
-                    bluetoothSocket.connect()
-                    isConnected = true
+                    val socket = BluetoothManager.getBluetoothSocket()
+                    if (socket == null || !socket.isConnected) {
+                        runOnUiThread {
+                            Toast.makeText(this, "Not connected to any device", Toast.LENGTH_SHORT).show()
+                        }
+                        return@Thread
+                    }
 
-                    val outStream: OutputStream = bluetoothSocket.outputStream
-                    val inStream = bluetoothSocket.inputStream
+                    val outStream: OutputStream = socket.outputStream
 
                     // ingredientsList의 quantity 값을 문자열로 변환하고 '\n'으로 연결
                     val data = "4\n\n" + ingredientsList.joinToString(separator = "\n") { it.quantity.toString() }
@@ -119,6 +116,7 @@ class Dev : AppCompatActivity() {
 
                     // 수신 버퍼 설정
                     val buffer = ByteArray(1024)
+                    val inStream = socket.inputStream
                     val bytesRead = inStream.read(buffer)
                     if (bytesRead == -1) {
                         Log.d("Bluetooth", "Peer socket closed")
@@ -128,30 +126,18 @@ class Dev : AppCompatActivity() {
 
                         // 수신된 데이터를 UI 스레드에서 토스트 메시지로 표시
                         runOnUiThread {
-                            Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
+                            Toast.makeText(applicationContext, "Complete", Toast.LENGTH_SHORT).show()
                         }
                     }
 
                 } catch (e: IOException) {
                     e.printStackTrace()
                 } finally {
-                    if (isConnected) {
-                        try {
-                            bluetoothSocket.close()  // 소켓을 안전하게 닫습니다.
-                            Log.d("Bluetooth", "Socket closed")
-                        } catch (e: IOException) {
-                            e.printStackTrace()
-                        }
-                    }
                     synchronized(this) {
                         isCommunicating = false
                     }
                 }
             }.start()
         }
-    }
-    override fun onResume() {
-        super.onResume()
-        SERVER_DEVICE_ADDRESS = Pairing.selectedDeviceAddress  // 최신 값을 가져옵니다.
     }
 }
