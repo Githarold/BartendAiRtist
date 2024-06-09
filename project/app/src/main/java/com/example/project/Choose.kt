@@ -1,9 +1,3 @@
-/**
- * Choose.kt
- * 사용자에게 칵테일을 선택할 수 있는 화면을 제공하는 액티비티
- * select.kt를 호출해 실제 칵테일 선택을 가능하게 한다
- */
-
 package com.example.project
 
 import android.content.Intent
@@ -24,16 +18,20 @@ class Choose : AppCompatActivity() {
 
         val recyclerView: RecyclerView = findViewById(R.id.cocktail_list)
         val cocktail_names = listOf(
-            "matini",
-            "sea_breeze",
-            "gintonic",
-            "orangeblossom",
-            "paradise",
-            "tomcollins",
-            "whitelady"
+            "seabreeze",
+            "baybreeze",
+            "planterspunch",
+            "screwdriver",
+            "hurricane",
+            "greyhound",
+            "cosmopolitan",
+            "reddevil",
+            "whitelady",
+            "longbeachicedtea",
+            "lemondropmartini",
+            "blackrussian"
         )
-        val adapter = CocktaillistAdapter(cocktail_names, object : OnCocktailClickListener {
-            // select.kt 액티비티 호출
+        val adapter = CocktaillistAdapter(this, cocktail_names, object : OnCocktailClickListener {
             override fun onCocktailClick(name: String) {
                 val intent = Intent(this@Choose, select::class.java)
                 intent.putExtra("COCKTAIL_NAME", name)
@@ -48,6 +46,7 @@ class Choose : AppCompatActivity() {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val backBtn = findViewById<Button>(R.id.backBtn)
         backBtn.setOnClickListener {
             finish()
