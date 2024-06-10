@@ -2,8 +2,7 @@ package com.example.project
 
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
-import android.bluetooth.BluetoothDevice
-import android.content.Context
+import android.bluetooth.BluetoothSocket
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -56,7 +55,7 @@ class ChooseCustomMethod : AppCompatActivity() {
         // buildBtn 누르면 빌드 순서 커스텀 화면으로 넘어감
         buildBtn.setOnClickListener {
             val intent = Intent(this, SetBuildOrder::class.java)
-            intent.putExtra("IngredientList", ArrayList<Ingredient>(receivedList))
+            intent.putExtra("IngredientList", ArrayList(receivedList))
             startActivity(intent)
         }
 
@@ -125,7 +124,6 @@ class ChooseCustomMethod : AppCompatActivity() {
 //서버로 보내기 위해 데이터 형식을 알맞게 바꿔주는 함수
 //리스트 형태의 데이터를 받아 String으로 바꿔 리턴
 fun formatDataForCommunication(ingredients: ArrayList<Ingredient>?): String {
-    //TODO
     val header = "2" // 일단은 2로 고정
 
     val body = StringBuilder()

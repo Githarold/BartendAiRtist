@@ -3,7 +3,6 @@ package com.example.project
 import android.Manifest
 import android.bluetooth.BluetoothAdapter
 import android.bluetooth.BluetoothSocket
-import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
@@ -27,6 +26,8 @@ class select : AppCompatActivity() {
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private var isCommunicating = false
+    private var receivedDataList: List<Int> = listOf()
+    private var recipeDataList: List<Int> = listOf()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -75,6 +76,13 @@ class select : AppCompatActivity() {
         val recipe = jsonObject.getString("recipe")
         val order = jsonObject.getString("order")
 
+        val receivedData = intent.getStringExtra("RECEIVED_DATA") ?: ""
+        receivedDataList = processData(receivedData)
+        recipeDataList = processData(recipe)
+
+        Log.d("SelectActivity", "Received Data List: $receivedDataList")
+        Log.d("SelectActivity", "Recipe Data List: $recipeDataList")
+
         val cocktailImg = findViewById<ImageView>(R.id.cocktail_img)
         val imageId = resources.getIdentifier(cocktailName, "drawable", packageName)
         cocktailImg.setImageResource(imageId)
@@ -87,9 +95,15 @@ class select : AppCompatActivity() {
 
         val selectBtn = findViewById<Button>(R.id.select_cocktail)
 
+        if (!validateData(receivedDataList, recipeDataList)) {
+            selectBtn.isEnabled = false
+        }
+        else {
+            selectBtn.isEnabled = true
+        }
+
         val send_data = "$head\n\n$recipe\n\n$order"
         selectBtn.setOnClickListener {
-
             sendData(send_data)
             Log.d("recipe", send_data)
         }
@@ -148,5 +162,19 @@ class select : AppCompatActivity() {
             }
         }
         communicationThread.start()
+    }
+
+    private fun processData(data: String): List<Int> {
+        return data.split("\n").mapNotNull { it.toIntOrNull() }
+    }
+
+    private fun validateData(receivedData: List<Int>, recipeData: List<Int>): Boolean {
+        if (receivedData.size != recipeData.size) return false
+        for (i in receivedData.indices) {
+            if (receivedData[i] - recipeData[i] <= 2 && recipeData[i]>0) {
+                return false
+            }
+        }
+        return true
     }
 }
