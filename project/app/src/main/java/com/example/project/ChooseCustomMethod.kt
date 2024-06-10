@@ -63,7 +63,7 @@ class ChooseCustomMethod : AppCompatActivity() {
         // stiringBtn 누르면 바로 서버로 보냄
         stiringBtn.setOnClickListener {
             Log.d("formattedData", formattedData)
-            sendData(formattedData)
+            sendData("$formattedData\n0\n0\n0\n0\n0\n0\n0\n0")
         }
     }
 
