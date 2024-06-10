@@ -1,5 +1,5 @@
 /**
- * SetBuildAdapter.kt
+ * SetBuildOrderAdapter.kt
  * 안드로이드 앱에서 사용되는 RecyclerView 및 ItemTouchHelper를 활용하여 재료 목록을 표시하고,
  * 사용자가 항목을 드래그하여 순서를 변경할 수 있는 기능을 구현한 어댑터와 콜백 클래스를 정의
  */
@@ -15,8 +15,8 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.RecyclerView
 import java.util.Collections
 
-class SetBuildAdapter(private var ingredientList: ArrayList<Ingredient>) :
-    RecyclerView.Adapter<SetBuildAdapter.IngredientViewHolder>(), ItemMoveCallback {
+class SetBuildOrderAdapter(private var ingredientList: ArrayList<Ingredient>) :
+    RecyclerView.Adapter<SetBuildOrderAdapter.IngredientViewHolder>(), ItemMoveCallback {
 
     // ViewHolder 클래스 정의
     class IngredientViewHolder(view: View) : RecyclerView.ViewHolder(view) {

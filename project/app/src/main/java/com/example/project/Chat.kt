@@ -193,10 +193,10 @@ class Chat : AppCompatActivity() {
 
         // AI 바텐더에게 실행 요청
         val run = openai.createRun(
-                threadId = thread.id,
-                request = RunRequest(
-                    assistantId = batender.id,
-                    instructions ="""
+            threadId = thread.id,
+            request = RunRequest(
+                assistantId = batender.id,
+                instructions ="""
                           Example 1:
                             Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood1'
                             Output: $exampleGptResponse1
@@ -221,7 +221,7 @@ class Chat : AppCompatActivity() {
                             Input: Inventory - $realInputDict, Mood/Preference - '$real_user_mood'
                             Output: 
                                             """.trimIndent())
-            )
+        )
 
         // 실행 결과가 완료될 때까지 대기
         do {

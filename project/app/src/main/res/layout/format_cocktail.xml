@@ -15,7 +15,7 @@
             android:layout_width="0dp"
             android:layout_height="75dp"
             android:layout_weight="2"
-            android:src="@drawable/matini"/>
+            android:src="@drawable/baybreeze"/>
         <TextView
             android:id="@+id/test_cocktail_name"
             android:layout_width="0dp"
