@@ -28,8 +28,7 @@ class Choose : AppCompatActivity() {
             "reddevil",
             "whitelady",
             "longbeachicedtea",
-            "lemondropmartini",
-            "blackrussian"
+            "lemondropmartini"
         )
         val adapter = CocktaillistAdapter(this, cocktail_names, object : OnCocktailClickListener {
             override fun onCocktailClick(name: String) {
