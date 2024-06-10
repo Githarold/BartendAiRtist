@@ -6,7 +6,7 @@ BartendAiRtist에 오신 것을 환영합니다, 당신의 취향과 기분에 �
 
 새로운 것을 원하든, 클래식한 칵테일을 원하든, 혹은 음료를 커스텀하고 싶든, BartendAiRtist는 개인화된 경험을 제공한 후, 즉석에서 완벽한 칵테일을 준비합니다.
 
-![image](https://github.com/Githarold/BartendAiRtist/assets/101968287/f757d01d-db2b-4b82-b4eb-07041bcc0a2b)
+![image](https://github.com/Githarold/BartendAiRtist/assets/101968287/f53960ff-d2cc-4910-9e17-a8afd24972de)
 
 
 ## 🌟 Features
