@@ -71,7 +71,9 @@ class select : AppCompatActivity() {
 
         val name = jsonObject.getString("name")
         val description = jsonObject.getString("description")
+        val head = jsonObject.getString("head")
         val recipe = jsonObject.getString("recipe")
+        val order = jsonObject.getString("order")
 
         val cocktailImg = findViewById<ImageView>(R.id.cocktail_img)
         val imageId = resources.getIdentifier(cocktailName, "drawable", packageName)
@@ -85,10 +87,11 @@ class select : AppCompatActivity() {
 
         val selectBtn = findViewById<Button>(R.id.select_cocktail)
 
-
+        val send_data = "$head\n\n$recipe\n\n$order"
         selectBtn.setOnClickListener {
-            sendData(recipe)
-            Log.d("recipe", recipe)
+
+            sendData(send_data)
+            Log.d("recipe", send_data)
         }
 
         val backBtn = findViewById<Button>(R.id.backBtn)

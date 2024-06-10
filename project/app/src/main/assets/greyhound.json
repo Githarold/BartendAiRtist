@@ -2,6 +2,7 @@
   "name": "그레이 하운드",
   "ename": "Greyhound",
   "description": "깔끔하고 상쾌한 맛을 좋아한다면 그레이 하운드를 추천! 보드카와 자몽 주스가 만나 쓴맛과 신맛의 조화가 일품이에요.\nmaterial_list: {1,0,0,0,0,0,3,2}\nquantity_list: {2,0,0,0,0,0,1,4}",
-  "recipe": "3\n\n2\n0\n0\n0\n0\n0\n1\n4\n\n1\n0\n0\n0\n0\n0\n3\n2",
-  "order": ""
+  "head": "3",
+  "recipe": "2\n0\n0\n0\n0\n0\n1\n4",
+  "order": "1\n0\n0\n0\n0\n0\n3\n2"
 }

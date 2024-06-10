@@ -2,6 +2,7 @@
   "name": "롱 비치 아이스티",
   "ename": "Long Beach Iced Tea",
   "description": "롱 아일랜드 아이스티의 상큼한 버전, 롱 비치 아이스티! 크랜베리 주스를 사용해 더욱 상큼한 맛을 느낄 수 있어요.",
-  "recipe": "2\n\n6\n2\n3\n4\n5\n6\n7\n8",
+  "head": "2",
+  "recipe": "6\n2\n3\n4\n5\n6\n7\n8",
   "order": ""
 }
