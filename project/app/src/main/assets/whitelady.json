@@ -1,7 +1,8 @@
 {
   "name": "화이트레이디",
   "ename": "White Lady",
-  "description": "존맛탱인데 좀 씀\n그래서 슬픔",
-  "recipe": "2\n\n6\n2\n3\n4\n5\n6\n7\n8",
+  "description": "깔끔하고 상쾌한 화이트 레이디! 진과 트리플 섹, 희석된 레몬 원액이 어우러져 산뜻한 맛을 자랑합니다. 특별한 날 한 잔 하기 좋아요.",
+  "head": "2",
+  "recipe": "6\n2\n3\n4\n5\n6\n7\n8",
   "order": ""
 }
