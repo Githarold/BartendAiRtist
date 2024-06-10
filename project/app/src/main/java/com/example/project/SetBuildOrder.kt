@@ -190,7 +190,7 @@ fun formatDataForCommunicationWithOrder(receivedList: String, ingredientOrderLis
     formattedData.append(receivedList)
 
     // ingredientOrderList를 추가
-    formattedData.append("\n\n") // '\n\n' 추가
+    formattedData.append("\n") // '\n\n' 추가
     formattedData.append(ingredientOrderList)
 
     return formattedData.toString()

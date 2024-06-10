@@ -88,6 +88,7 @@ class select : AppCompatActivity() {
 
         selectBtn.setOnClickListener {
             sendData(recipe)
+            Log.d("recipe", recipe)
         }
 
         val backBtn = findViewById<Button>(R.id.backBtn)
