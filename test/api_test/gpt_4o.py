@@ -15,20 +15,26 @@ real_input_dict = {
     'Triple Sec': 500, 'Cranberry Juice': 900, 'Grapefruit Juice': 1000, 'Orange Juice': 800
 }
 
-example_user_mood1 = "오늘따라 뭔가 시원하고 달콤한 칵테일이 마시고 싶어. 피로도 풀리고 기분도 좋아지는 그런 종류로."
-example_gpt_response1 = "그런 기분에 딱 맞는 칵테일로 '모히토'를 추천드릴게요. 신선한 민트와 라임이 들어가 상큼하고 시원한 맛이 특징이랍니다. 럼 주를 기반으로 해서 달콤한 맛도 느끼실 수 있고요.@[{'Rum': 1, 'Diluted Lemon Juice': 2, 'Orange Juice': 3}, {'Rum': 2, 'Diluted Lemon Juice': 3, 'Orange Juice': 4}]"
+example_user_mood1 = "오늘은 상쾌하고 열대의 풍미가 가득한 칵테일을 마시고 싶어요."
+example_gpt_response1 = "그런 날에는 '허리케인'을 추천드릴게요. 럼과 오렌지 주스가 어우러져 상쾌하고 달콤한 맛이 특징입니다. 열대 지방의 느낌을 가득 느끼실 수 있을 거예요.§[0,2,0,0,0,2,0,1]"
 
-example_user_mood2 = "오늘 정말 무더운 날이네요. 뭔가 시원하고 상쾌한 음료가 마시고 싶어요."
-example_gpt_response2 = "열대의 상쾌함을 원하신다면 '트로피칼 펀치'를 추천드리고 싶어요. 이 칵테일은 자몽 주스와 오렌지 주스를 기반으로 하고 있어서 상큼하고, 럼과 트리플 섹이 더해져 풍미가 풍부합니다. 정말 열대 지방의 분위기를 느낄 수 있죠.@[{'Rum': 1, 'Orange Juice': 2, 'Grapefruit Juice': 3, 'Triple Sec': 4, 'Cranberry Juice': 5}, {'Rum': 2, 'Orange Juice': 4, 'Grapefruit Juice': 4, 'Triple Sec': 1, 'Cranberry Juice': 2}]"
+example_user_mood2 = "오늘 뭔가 상큼하고 쌉쌀한 맛이 나는 칵테일이 생각나네요."
+example_gpt_response2 = "그렇다면 '그레이 하운드'를 추천드려요. 보드카와 자몽 주스가 어우러져 상큼하면서도 쌉쌀한 맛이 매력적인 칵테일입니다.§[2,0,0,0,0,0,0,3]"
 
-example_user_mood3 = "주말 파티를 위해 강렬한 칵테일이 필요해요."
-example_gpt_response3 = "주말 파티에는 '마가리타'를 추천드릴게요. 테킬라와 라임 주스, 트리플 섹이 조화를 이루어 강렬하면서도 상쾌한 맛을 느낄 수 있습니다.@[{'Tequila': 1, 'Triple Sec': 1, 'Lime Juice': 1}, {'Tequila': 2, 'Triple Sec': 2, 'Lime Juice': 2}]"
+example_user_mood3 = "오늘은 좀 세련된 분위기의 칵테일을 마시고 싶어요."
+example_gpt_response3 = "세련된 분위기를 원하신다면 '코스모폴리탄'이 제격입니다. 보드카와 크랜베리 주스, 그리고 트리플 섹이 어우러져 우아한 맛을 느끼실 수 있습니다.§[2,0,0,1,0,0,0,1]"
 
-example_user_mood4 = "친구와 함께 마실 수 있는 달콤한 칵테일을 추천해줘."
-example_gpt_response4 = "친구와 함께 마시기 좋은 칵테일로 '피치 벨리니'를 추천드릴게요. 피치 퓌레와 샴페인이 어우러져 달콤하고 청량한 맛을 느낄 수 있습니다.@[{'Peach Puree': 1, 'Champagne': 3}, {'Peach Puree': 1, 'Champagne': 4}]"
+example_user_mood4 = "오늘은 강렬한 맛이 나는 칵테일이 마시고 싶어요."
+example_gpt_response4 = "그렇다면 '레드 데빌'을 추천드립니다. 보드카와 크랜베리 주스, 그리고 레몬 주스가 어우러져 강렬하고 상큼한 맛을 느끼실 수 있습니다.§[2,0,0,0,1,0,0,4]"
 
-example_user_mood5 = "저녁 식사 후에 마실 수 있는 부드러운 칵테일을 원해요."
-example_gpt_response5 = "저녁 식사 후에는 '화이트 러시안'을 추천드릴게요. 보드카, 커피 리큐어, 크림이 어우러져 부드럽고 진한 맛을 느낄 수 있습니다.@[{'Vodka': 2, 'Coffee Liqueur': 1, 'Cream': 1}, {'Vodka': 3, 'Coffee Liqueur': 2, 'Cream': 2}]"
+example_user_mood5 = "오늘은 깔끔하면서도 우아한 칵테일을 마시고 싶어요."
+example_gpt_response5 = "그렇다면 '화이트 레이디'를 추천드려요. 진과 트리플 섹, 그리고 레몬 주스가 어우러져 깔끔하고 우아한 맛을 자랑하는 칵테일입니다.§[0,0,2,1,1,0,0,0]"
+
+example_user_mood6 = "친구들과 함께 즐길 수 있는 재미있는 칵테일이 필요해요."
+example_gpt_response6 = "그렇다면 '롱 비치 아이스티'를 추천드릴게요. 보드카, 럼, 진, 그리고 크랜베리 주스가 어우러져 강렬하면서도 상쾌한 맛을 느끼실 수 있습니다.§[1,1,1,1,1,0,0,0]"
+
+example_user_mood7 = "오늘은 상큼하고 달콤한 칵테일이 생각나요."
+example_gpt_response7 = "상큼하고 달콤한 맛을 원하신다면 '레몬 드롭 마티니'를 추천드립니다. 보드카와 레몬 주스, 그리고 트리플 섹이 어우러져 상큼하면서도 달콤한 맛이 일품인 칵테일입니다.§[2,0,0,1,1,0,0,0]"
 
 # AI 바텐더 Assistant 생성
 bartender = client.beta.assistants.create(
@@ -36,7 +42,7 @@ bartender = client.beta.assistants.create(
     instructions="""\
 You are an AI bartender. First, receive the inventory as a dictionary named 'example_dict', \
 then consider the user's mood and preferences to recommend a cocktail. Ensure that the total volume of ingredients does not exceed 250ml.\
-Use a specific delimiter (@) to separate the cocktail recommendation from the recipe,\
+Use a specific delimiter (§) to separate the cocktail recommendation from the recipe,\
 which should be provided in a structured list format, including two dictionaries:\
 one for the "Order" of ingredients and another for the "Integer" number of 30ml pumps required for each ingredient.\
 """,
@@ -90,7 +96,7 @@ while True:
             content_block = message.data[0].content[0]  # 가장 최근의 메시지의 첫 번째 content block
             if content_block.type == 'text':
                 try:
-                    recommend_reason, recipe_string = content_block.text.value.split('@')
+                    recommend_reason, recipe_string = content_block.text.value.split('§')
                     print(recommend_reason)
                 except ValueError:
                     print(f"Invalid Response: {content_block.text.value}")

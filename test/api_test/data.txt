@@ -1,1 +1,1 @@
-[{'Gin': 1, 'Grenadine': 0.5, 'Diluted Lemon Juice': 1, 'Soda Water': 3}, {'Gin': 2, 'Grenadine': 1, 'Diluted Lemon Juice': 2, 'Soda Water': 4}]': 2, 'Orange Juice': 2, 'Grapefruit Juice': 2}]
+[{'Vodka': 1, 'Cranberry Juice': 2, 'Triple Sec': 1, 'Lime Juice': 0.5}, {'Vodka': 2, 'Cranberry Juice': 4, 'Triple Sec': 2, 'Lime Juice': 1}]
