@@ -1,27 +1,49 @@
+/**
+ * Chat.kt
+ * OpenAI API를 사용하여 칵테일 레시피를 추천하는 챗봇 기능을 구현한 액티비티
+ */
 package com.example.project
 
 import android.os.Bundle
-import android.view.KeyEvent
 import android.view.View
-import android.view.inputmethod.EditorInfo
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.coroutines.*
+import org.json.JSONException
+import org.json.JSONObject
+import java.io.IOException
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody
+import okhttp3.Request
+import okhttp3.Request.Builder
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
+import android.view.inputmethod.EditorInfo
+import android.view.KeyEvent
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import com.google.gson.Gson
+import java.util.concurrent.TimeUnit
+import com.aallam.openai.*
 import com.aallam.openai.api.BetaOpenAI
+import com.aallam.openai.client.*
+import com.aallam.openai.client.OpenAI
 import com.aallam.openai.api.assistant.*
+import com.aallam.openai.api.core.RequestOptions
 import com.aallam.openai.api.core.Role
 import com.aallam.openai.api.core.Status
+import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.message.MessageContent
 import com.aallam.openai.api.message.MessageRequest
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.api.run.RunRequest
 import com.aallam.openai.api.thread.ThreadId
-import com.aallam.openai.client.*
-import com.aallam.openai.client.OpenAI
+import kotlinx.coroutines.*
+import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
 
 class Chat : AppCompatActivity() {
     var recycler_view: RecyclerView? = null
@@ -30,7 +52,7 @@ class Chat : AppCompatActivity() {
     var send_btn: Button? = null
     var messageList: MutableList<Message>? = null
     var messageAdapter: MessageAdapter? = null
-
+    var client: OkHttpClient = OkHttpClient()
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -62,10 +84,21 @@ class Chat : AppCompatActivity() {
 
     }
 
+
+
+
+    /**
+     * 함수 정의 부분
+     */
+
     // 메시지를 보내는 함수
     fun sendMessage(){
         val question = message_edit!!.getText().toString().trim { it <= ' ' }
         addToChat(question, Message.SENT_BY_ME)
+//        if (question == "q"){
+//            val result = adjustPumps(Companion.recipeString)
+//            println(result)
+//        }
         CoroutineScope(Dispatchers.Main).launch {
             callAPI(question)
         }
@@ -88,53 +121,66 @@ class Chat : AppCompatActivity() {
         addToChat(response, Message.SENT_BY_BOT)
     }
 
-    // OpenAI API를 호출하여 사용자 입력에 부합하는 칵테일을 추천한 뒤
+    // OpenAI API를 호출, 사용자 입력에 부합하는 칵테일을 추천한 뒤
     // addResponse 함수를 호출해 응답 메시지로 추가하는 함수
     @OptIn(BetaOpenAI::class)
-    suspend fun callAPI(question: String?) {
+    suspend fun callAPI(question: String?){
         messageList!!.add(Message("...", Message.SENT_BY_BOT))
-        val openai = OpenAI(token = MY_SECRET_KEY)
+        val openai = OpenAI( token = MY_SECRET_KEY)
         val real_user_mood = question
 
-        val assistant = openai.assistant(
+        // Few-shot Learning을 위한 예시 입력 선언
+        val exampleInputDict = mapOf(
+            "Vodka" to 700, "Rum" to 700, "Gin" to 700, "Diluted Lemon Juice" to 1000,
+            "Triple Sec" to 500, "Cranberry Juice" to 1000, "Grapefruit Juice" to 1000, "Orange Juice" to 800
+        )
+
+        val realInputDict = mapOf(
+            "Vodka" to 1000, "Rum" to 700, "Gin" to 800, "Diluted Lemon Juice" to 800,
+            "Triple Sec" to 500, "Cranberry Juice" to 900, "Grapefruit Juice" to 1000, "Orange Juice" to 800
+        )
+
+        val exampleUserMood1 = "오늘은 상쾌하고 열대의 풍미가 가득한 칵테일을 마시고 싶어요."
+        val exampleGptResponse1 = "그런 날에는 '허리케인'을 추천드릴게요. 럼과 오렌지 주스가 어우러져 상쾌하고 달콤한 맛이 특징입니다. 열대 지방의 느낌을 가득 느끼실 수 있을 거예요.@[0,2,0,0,0,2,0,1]"
+
+        val exampleUserMood2 = "오늘 뭔가 상큼하고 쌉쌀한 맛이 나는 칵테일이 생각나네요."
+        val exampleGptResponse2 = "그렇다면 '그레이 하운드'를 추천드려요. 보드카와 자몽 주스가 어우러져 상큼하면서도 쌉쌀한 맛이 매력적인 칵테일입니다.@[2,0,0,0,0,0,0,3]"
+
+        val exampleUserMood3 = "오늘은 좀 세련된 분위기의 칵테일을 마시고 싶어요."
+        val exampleGptResponse3 = "세련된 분위기를 원하신다면 '코스모폴리탄'이 제격입니다. 보드카와 크랜베리 주스, 그리고 트리플 섹이 어우러져 우아한 맛을 느끼실 수 있습니다.@[2,0,0,1,0,0,0,1]"
+
+        val exampleUserMood4 = "오늘은 강렬한 맛이 나는 칵테일이 마시고 싶어요."
+        val exampleGptResponse4 = "그렇다면 '레드 데빌'을 추천드립니다. 보드카와 크랜베리 주스, 그리고 레몬 주스가 어우러져 강렬하고 상큼한 맛을 느끼실 수 있습니다.@[2,0,0,0,1,0,0,4]"
+
+        val exampleUserMood5 = "오늘은 깔끔하면서도 우아한 칵테일을 마시고 싶어요."
+        val exampleGptResponse5 = "그렇다면 '화이트 레이디'를 추천드려요. 진과 트리플 섹, 그리고 레몬 주스가 어우러져 깔끔하고 우아한 맛을 자랑하는 칵테일입니다.@[0,0,2,1,1,0,0,0]"
+
+        val exampleUserMood6 = "친구들과 함께 즐길 수 있는 재미있는 칵테일이 필요해요."
+        val exampleGptResponse6 = "그렇다면 '롱 비치 아이스티'를 추천드릴게요. 보드카, 럼, 진, 그리고 크랜베리 주스가 어우러져 강렬하면서도 상쾌한 맛을 느끼실 수 있습니다.@[1,1,1,1,1,0,0,0]"
+
+        val exampleUserMood7 = "오늘은 상큼하고 달콤한 칵테일이 생각나요."
+        val exampleGptResponse7 = "상큼하고 달콤한 맛을 원하신다면 '레몬 드롭 마티니'를 추천드립니다. 보드카와 레몬 주스, 그리고 트리플 섹이 어우러져 상큼하면서도 달콤한 맛이 일품인 칵테일입니다.@[2,0,0,1,1,0,0,0]"
+
+        // AI 바텐더 Assistant 생성
+        val batender = openai.assistant(
             request = AssistantRequest(
                 name = "AI Bartender",
                 model = ModelId("gpt-4-turbo"),
                 instructions = """
-                    You are an AI bartender. You will receive the user's mood and preferences, and based on that,
-                    you will recommend a cocktail from the following list:
-                    씨 브리즈, 베이 브리즈, 플랜터즈 펀치, 스크류 드라이버, 허리케인, 그레이 하운드, 코스모폴리탄, 레드 데빌, 화이트 레이디, 롱 비치 아이스티, 레몬 드롭 마티니.
-
-                    Here are the ingredients and quantities for each cocktail:
-                    - 씨 브리즈: {1,0,0,0,0,0,3,2}, {2,0,0,0,0,0,1,4}
-                    - 베이 브리즈: {1,0,0,0,0,2,0,3}, {2,0,0,0,0,1,0,4}
-                    - 플랜터즈 펀치: {0,1,0,0,0,2,3,0}, {0,2,0,0,0,2,1,0}
-                    - 스크류 드라이버: {1,0,0,0,0,2,0,0}, {2,0,0,0,0,3,0,0}
-                    - 허리케인: {0,2,0,0,0,2,0,1}
-                    - 그레이 하운드: {2,0,0,0,0,0,0,3}
-                    - 코스모폴리탄: {2,0,0,1,0,0,0,1}
-                    - 레드 데빌: {2,0,0,1,0,0,0,3}
-                    - 화이트 레이디: {0,0,2,1,0,0,0,1}
-                    - 롱 비치 아이스티: {1,1,1,1,0,0,3,0}
-                    - 레몬 드롭 마티니: {2,0,0,1,0,0,0,1}
-
-                    Each index in the material_list and quantity_list corresponds to the following ingredients:
-                    1. 보드카
-                    2. 럼
-                    3. 진
-                    4. 트리플 섹
-                    5. 희석된 레몬 원액
-                    6. 오렌지 주스
-                    7. 자몽주스
-                    8. 크랜베리 주스
-
-                    Ensure that the cocktail matches the user's preferences and mood. Provide the recommendation in Korean.
+                    You are an AI bartender. First, receive the inventory as a dictionary named 'example_dict',
+                    then consider the user's mood and preferences to recommend a cocktail.
+                    Ensure that the total volume of ingredients does not exceed 250ml. Use a specific delimiter (@) to separate the cocktail recommendation from the recipe,
+                    which should be provided in a structured list format, including two dictionaries:
+                    one for the "Order" of ingredients and another for the "Integer" number of 30ml pumps required for each ingredient.
                 """.trimIndent()
             )
         )
 
+        // 대화를 관리할 Thread 생성
         val thread = openai.thread()
+        println(thread.id)
 
+        // 사용자 입력을 Thread에 전송
         openai.message(
             threadId = thread.id,
             request = MessageRequest(
@@ -143,18 +189,57 @@ class Chat : AppCompatActivity() {
             )
         )
 
+        // Thread에 있는 메시지 확인
+        val messages = openai.messages(thread.id)
+        println("List of messages in the thread:")
+        for (message in messages) {
+            val textContent = message.content.first() as? MessageContent.Text ?: error("Expected MessageContent.Text")
+            println(textContent.text.value)
+        }
+
+        // AI 바텐더에게 실행 요청
         val run = openai.createRun(
             threadId = thread.id,
             request = RunRequest(
-                assistantId = assistant.id,
-                instructions = """
-                    Mood/Preference - '$real_user_mood'
-                    Output: 
-                    Select one of these cocktails: 씨 브리즈, 베이 브리즈, 플랜터즈 펀치, 스크류 드라이버, 허리케인, 그레이 하운드, 코스모폴리탄, 레드 데빌, 화이트 레이디, 롱 비치 아이스티, 레몬 드롭 마티니.
-                """.trimIndent()
-            )
+                assistantId = batender.id,
+                instructions ="""
+                            Ingredients in order: [Vodka, Rum, Gin, Triple Sec, Diluted Lemon Juice, Orange Juice, Grapefruit Juice, Cranberry Juice]
+
+                            Example 1:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood1'
+                            Output: $exampleGptResponse1
+                            
+                            Example 2:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood2'
+                            Output: $exampleGptResponse2
+                        
+                            Example 3:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood3'
+                            Output: $exampleGptResponse3
+                        
+                            Example 4:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood4'
+                            Output: $exampleGptResponse4
+                        
+                            Example 5:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood5'
+                            Output: $exampleGptResponse5
+                            
+                            Example 6:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood6'
+                            Output: $exampleGptResponse6
+                            
+                            Example 7:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood7'
+                            Output: $exampleGptResponse7 
+                            
+                            You have to respond in Korean:
+                            Input: Inventory - $realInputDict, Mood/Preference - '$real_user_mood'
+                            Output: 
+                                            """.trimIndent())
         )
 
+        // 실행 결과가 완료될 때까지 대기
         do {
             delay(1500)
             val retrievedRun = openai.getRun(threadId = thread.id, runId = run.id)
@@ -163,14 +248,68 @@ class Chat : AppCompatActivity() {
             }
         } while (retrievedRun.status != Status.Completed)
 
+        // AI 바텐더의 응답 메시지 처리
         val assistantMessages = openai.messages(thread.id)
-        val message = assistantMessages.firstOrNull()?.content?.firstOrNull() as? MessageContent.Text
-        val messageText = message?.text?.value ?: "Err.. Try again"
+        val message = assistantMessages[0]
+        val textContent = message.content.first() as? MessageContent.Text ?: error("Expected MessageContent.Text")
+        val messageText = textContent.text.value
+        println(messageText)
 
-        addResponse(messageText)
+        if (messageText != null && messageText.isNotEmpty()){
+            val parts = messageText.split("@")
+            if (parts.size > 1) {
+                val recommendReason = parts[0]
+                val recipeString = parts[1]
+                addResponse(recommendReason)
+            } else {
+                addResponse("Invalid Response: $messageText")
+            }
+        }else{
+            addResponse("Err.. Try again")
+        }
+
+
     }
 
+    fun adjustPumps(recipeString: String?): Pair<String, Map<String, Int>>? {
+        try {
+            val recipe = recipeString!!.removeSurrounding("(", ")").split(", ") // 문자열을 분해하여 파싱
+            val recipeName = recipe[0].removeSurrounding("'")
+            val ingredientsAndPumps = recipe[1].removeSurrounding("{", "}")
+                .split(", ")
+                .associate {
+                    val (ingredient, pumps) = it.split(": ")
+                    ingredient.removeSurrounding("'") to pumps.toInt()
+                }
+
+            val totalPumps = ingredientsAndPumps.values.sum()
+            val targetPumps = 7
+
+            if (totalPumps > targetPumps) {
+                addResponse("Adjusting" +
+                        " recipe...")
+                addResponse("Original recipe: $ingredientsAndPumps")
+
+                val adjustmentRatio = targetPumps.toDouble() / totalPumps
+                val adjustedPumps = ingredientsAndPumps.mapValues { (_, pumps) ->
+                    (pumps * adjustmentRatio).roundToInt()
+                }
+
+                addResponse("Adjusted recipe: $adjustedPumps")
+                return Pair(recipeName, adjustedPumps)
+            } else {
+                return Pair(recipeName, ingredientsAndPumps)
+            }
+        } catch (e: Exception) {
+            addResponse("레시피 파싱 오류: $e")
+            return null
+        }
+    }
+
+    // 클래스 레벨에서 접근 가능한 객체 멤버 선언
     companion object {
+        val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
         private const val MY_SECRET_KEY = ""
+        var recipeString: String? = null
     }
 }
