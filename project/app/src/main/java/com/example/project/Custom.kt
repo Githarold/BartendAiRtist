@@ -65,11 +65,16 @@ class Custom : AppCompatActivity() {
         val selectBtn = findViewById<Button>(R.id.selectBtn)
         selectBtn.setOnClickListener {
             calculateTotalQuantity(ingredientsList)
-            if (totalQuantity > 10) {
+            if (totalQuantity > 7) {
                 showWarningDialog()
             } else {
                 showConfirmationDialog()
             }
+        }
+
+        val noticeBtn = findViewById<Button>(R.id.noticeBtn)
+        noticeBtn.setOnClickListener{
+            showCustomUnitDialog()
         }
     }
 
@@ -116,5 +121,16 @@ class Custom : AppCompatActivity() {
         ingredientsList.forEach { ingredient ->
             totalQuantity += ingredient.quantity
         }
+    }
+
+    private fun showCustomUnitDialog() {
+        val builder = AlertDialog.Builder(this)
+        builder.setTitle("커스텀 단위")
+        builder.setMessage("1=한펌프=30mL 입니다! \n재료의 총 펌프수 합이 7(=210mL)를 \n넘는다면 컵이 넘칠 수 있습니다!")
+        builder.setPositiveButton("확인") { dialog, _ ->
+            dialog.dismiss()
+        }
+        val dialog = builder.create()
+        dialog.show()
     }
 }

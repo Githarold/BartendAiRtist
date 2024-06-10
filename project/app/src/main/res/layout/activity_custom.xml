@@ -8,14 +8,38 @@
     android:orientation="vertical"
     tools:context=".Custom">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/backBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="뒤로가기"
-        android:background="@drawable/btn_background"
-        android:layout_margin="5dp"
-        android:textColor="#FFFFFF"/>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="뒤로가기"
+            android:background="@drawable/btn_background"
+            android:layout_margin="5dp"
+            android:textColor="#FFFFFF"
+            android:layout_alignParentStart="true"
+            android:layout_centerVertical="true" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/noticeBtn"
+            android:layout_width="52dp"
+            android:layout_height="43dp"
+            android:layout_alignParentEnd="true"
+            android:layout_marginStart="242dp"
+            android:layout_marginLeft="5dp"
+            android:layout_marginTop="5dp"
+            android:layout_marginEnd="5dp"
+            android:layout_marginRight="5dp"
+            android:layout_marginBottom="5dp"
+            android:layout_toEndOf="@id/backBtn"
+            android:background="@drawable/btn_circle"
+            android:text="!"
+            android:textColor="#03A9F4"
+            android:textSize="30dp" />
+    </RelativeLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cocktail_ingredients_list"
@@ -27,6 +51,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/edit_background"
-        android:layout_gravity="bottom|right"
-        android:text="선택" />
+        android:layout_gravity="bottom|end"
+        android:text="선택"
+        android:layout_margin="5dp" />
 </LinearLayout>
