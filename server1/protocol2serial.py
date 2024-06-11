@@ -5,6 +5,8 @@ import serial
 ser = serial.Serial('/dev/ttyACM0', 9600, timeout=1)
 
 def generate_lists(step_input, linear_input):
+   print("step_input: ",step_input)
+   print("linear_input: ", linear_input)
    values, indices = [], []
    # 0이 아닌 원소와 그 인덱스를 저장
    for i, val in enumerate(step_input):
@@ -51,6 +53,7 @@ def protocol2serial(data : Protocol):
             temp+=1
     elif data.head=="3":
         before=0
+        print(data.order)
         for x in range(max(data.order)):
             new=data.order.index(x+1)
             temp=new-before
@@ -59,6 +62,7 @@ def protocol2serial(data : Protocol):
             dispensor_activate_list.append(data.content[new])
     total=sum(disk_rotation_list)
     disk_rotation_list.append(-total)
+    print("debug: ", disk_rotation_list, dispensor_activate_list)
     return disk_rotation_list, dispensor_activate_list
 
 def send_data_to_arduino(dc_input, disk_rotation_list, dispensor_activate_list):
@@ -71,9 +75,8 @@ def send_data_to_arduino(dc_input, disk_rotation_list, dispensor_activate_list):
        if ser.in_waiting > 0:
            response = ser.readline().decode('utf-8').strip()
            print("Received from Arduino:", response)
-           if response == "9":
-            print("Finished!")
-            break
+           print("Finished!")
+           break
        time.sleep(0.1)
 
 

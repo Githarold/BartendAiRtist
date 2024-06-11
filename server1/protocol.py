@@ -18,7 +18,9 @@ class Protocol:
                 if self.content[i]>0:
                     self.order[i]=temp
                     temp+=1
-                      
+                    print("temp:",temp)
+                    
+            print("self.content:",self.content)        
         if self.head == '3':
             self.order = list(map(int, data[2].split()))
         return None

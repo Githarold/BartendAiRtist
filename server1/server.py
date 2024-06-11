@@ -3,7 +3,6 @@ from bluetooth import *
 from protocol import Protocol
 from processing import *
 from parsing import json_list
-import subprocess
 
 PATH = "./cocktail.json"
 cocktail_src = json_list(PATH)
@@ -18,12 +17,8 @@ def handle_client(client_sock, client_info, cocktail_src):
         data = Protocol()
         while 1:
             received_data = client_sock.recv(BUFSIZE).decode()
-            print(received_data)
             data.decode(received_data)
-            print(data.head)
-            print(data.content)
-            print(data.order)
-            cocktail_src = json_list(PATH)
+            print(received_data)
             if data.head == "0":
                 print("connect")
             elif data.head == "1":
@@ -57,7 +52,7 @@ def start_server():
     except Exception as e:
         print("Server setup error:", e)
         sys.exit(-1)
-    subprocess.call("sudo /home/pi4-7/blue/bin/python ~/BartendAiRtist/circuit/rpi/neopixel_boot.py", shell=True)
+
     try:
         while True:
             try:
