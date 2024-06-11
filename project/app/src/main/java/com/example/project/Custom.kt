@@ -127,7 +127,7 @@ class Custom : AppCompatActivity() {
     private fun showCustomUnitDialog() {
         val builder = AlertDialog.Builder(this)
         builder.setTitle("커스텀 단위")
-        builder.setMessage("1=한펌프=30mL 입니다! \n재료의 총 펌프수 합이 7(=210mL)를 \n넘는다면 컵이 넘칠 수 있습니다!")
+        builder.setMessage("경고: 한 펌프는 30mL입니다.\n재료의 총 펌프 수가 7(=210mL)을 넘으면 \n컵이 넘칠 수 있습니다!")
         builder.setPositiveButton("확인") { dialog, _ ->
             dialog.dismiss()
         }
