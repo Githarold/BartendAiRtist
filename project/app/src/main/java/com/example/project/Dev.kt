@@ -23,7 +23,7 @@ import java.io.OutputStream
 class Dev : AppCompatActivity() {
     private var totalQuantity = 0
     private val ingredientsList = listOf(
-        Ingredient("vodka", order = 1 ),
+        Ingredient("Vodka", order = 1 ),
         Ingredient("Rum", order = 2),
         Ingredient("Gin", order = 3),
         Ingredient("Triple Sec", order = 4),
