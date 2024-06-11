@@ -26,15 +26,16 @@ class Custom : AppCompatActivity() {
 
     private var totalQuantity = 0
     val ingredientsList = listOf(
-        Ingredient("ex1"),
-        Ingredient("ex2"),
-        Ingredient("ex3"),
-        Ingredient("ex4"),
-        Ingredient("ex5"),
-        Ingredient("ex6"),
-        Ingredient("ex7"),
-        Ingredient("ex8"),
+        Ingredient("vodka", order = 1 ),
+        Ingredient("Rum", order = 2),
+        Ingredient("Gin", order = 3),
+        Ingredient("Triple Sec", order = 4),
+        Ingredient("Diluted Lemon Syrup", order = 5),
+        Ingredient("Orange Juice", order = 6),
+        Ingredient("Grapefruit Juice", order = 7),
+        Ingredient("Cranberry Juice", order = 8),
     )
+    val maxCount = 7
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -60,12 +61,12 @@ class Custom : AppCompatActivity() {
             finish()
         }
 
-        // 선택 버튼을 누른 경우, totalQuantity가 10(임의 값)을 넘으면 경고 다이얼로그 표시
+        // 선택 버튼을 누른 경우, totalQuantity가 7(210mL)을 넘으면 경고 다이얼로그 표시
         // 10(임의 값)을 넘지 않는다면 ChooseCustomMethod.kt 호출
         val selectBtn = findViewById<Button>(R.id.selectBtn)
         selectBtn.setOnClickListener {
             calculateTotalQuantity(ingredientsList)
-            if (totalQuantity > 7) {
+            if (totalQuantity > maxCount) {
                 showWarningDialog()
             } else {
                 showConfirmationDialog()

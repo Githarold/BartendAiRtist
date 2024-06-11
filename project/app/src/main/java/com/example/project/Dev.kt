@@ -23,14 +23,14 @@ import java.io.OutputStream
 class Dev : AppCompatActivity() {
     private var totalQuantity = 0
     private val ingredientsList = listOf(
-        Ingredient("ex1"),
-        Ingredient("ex2"),
-        Ingredient("ex3"),
-        Ingredient("ex4"),
-        Ingredient("ex5"),
-        Ingredient("ex6"),
-        Ingredient("ex7"),
-        Ingredient("ex8"),
+        Ingredient("vodka", order = 1 ),
+        Ingredient("Rum", order = 2),
+        Ingredient("Gin", order = 3),
+        Ingredient("Triple Sec", order = 4),
+        Ingredient("Diluted Lemon Syrup", order = 5),
+        Ingredient("Orange Juice", order = 6),
+        Ingredient("Grapefruit Juice", order = 7),
+        Ingredient("Cranberry Juice", order = 8),
     )
     private val REQUEST_ENABLE_BT = 1
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100

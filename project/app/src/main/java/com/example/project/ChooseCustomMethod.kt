@@ -129,7 +129,7 @@ fun formatDataForCommunication(ingredients: ArrayList<Ingredient>?): String {
     val body = StringBuilder()
 
     // ingredients는 항상 ex1에서 ex8까지 고정된 순서로 있다고 가정
-    val expectedIngredients = listOf("ex1", "ex2", "ex3", "ex4", "ex5", "ex6", "ex7", "ex8")
+    val expectedIngredients = listOf("Vodka", "Rum", "Gin", "Triple Sec", "Diluted Lemon Syrup", "Orange Juice", "Grapefruit Juice", "Cranberry Juice")
     expectedIngredients.forEach { ingredientName ->
         val quantity = ingredients?.find { it.name == ingredientName }?.quantity ?: 0
         body.append("$quantity\n")

@@ -271,41 +271,6 @@ class Chat : AppCompatActivity() {
 
     }
 
-    fun adjustPumps(recipeString: String?): Pair<String, Map<String, Int>>? {
-        try {
-            val recipe = recipeString!!.removeSurrounding("(", ")").split(", ") // 문자열을 분해하여 파싱
-            val recipeName = recipe[0].removeSurrounding("'")
-            val ingredientsAndPumps = recipe[1].removeSurrounding("{", "}")
-                .split(", ")
-                .associate {
-                    val (ingredient, pumps) = it.split(": ")
-                    ingredient.removeSurrounding("'") to pumps.toInt()
-                }
-
-            val totalPumps = ingredientsAndPumps.values.sum()
-            val targetPumps = 7
-
-            if (totalPumps > targetPumps) {
-                addResponse("Adjusting" +
-                        " recipe...")
-                addResponse("Original recipe: $ingredientsAndPumps")
-
-                val adjustmentRatio = targetPumps.toDouble() / totalPumps
-                val adjustedPumps = ingredientsAndPumps.mapValues { (_, pumps) ->
-                    (pumps * adjustmentRatio).roundToInt()
-                }
-
-                addResponse("Adjusted recipe: $adjustedPumps")
-                return Pair(recipeName, adjustedPumps)
-            } else {
-                return Pair(recipeName, ingredientsAndPumps)
-            }
-        } catch (e: Exception) {
-            addResponse("레시피 파싱 오류: $e")
-            return null
-        }
-    }
-
     // 클래스 레벨에서 접근 가능한 객체 멤버 선언
     companion object {
         val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
