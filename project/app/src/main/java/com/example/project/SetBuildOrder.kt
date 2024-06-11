@@ -86,10 +86,7 @@ class SetBuildOrder : AppCompatActivity() {
         val selectBtn = findViewById<Button>(R.id.selectBtn)
         selectBtn.setOnClickListener {
             val currentList = adapter.getItems()
-//            println(currentList)
             val ingredientOrderList = getIngredientOrderList(currentList)
-//            println(ingredientOrderList)
-//            println(receivedList)
             val formattedDataList = getIngredientQuantityList(receivedList)
             val formattedData = formatDataForCommunicationWithOrder(formattedDataList, ingredientOrderList)
             Log.d("formattedData", formattedData)
@@ -161,7 +158,7 @@ fun getIngredientOrderList(currentList: List<Ingredient>): String {
     val orderList = MutableList(totalIngredients) { 0 }
 
     for ((index, ingredient) in currentList.withIndex()) {
-        val position = ingredient.name.removePrefix("ex").toIntOrNull() ?: continue
+        val position = ingredient.order?: continue
         if (position in 1..totalIngredients) {
             orderList[position - 1] = index + 1
         }
@@ -178,7 +175,7 @@ fun getIngredientQuantityList(ingredients: ArrayList<Ingredient>?): String {
     val body = StringBuilder()
 
     // ingredients는 항상 ex1에서 ex8까지 고정된 순서로 있다고 가정
-    val expectedIngredients = listOf("ex1", "ex2", "ex3", "ex4", "ex5", "ex6", "ex7", "ex8")
+    val expectedIngredients = listOf("Vodka", "Rum", "Gin", "Triple Sec", "Diluted Lemon Syrup", "Orange Juice", "Grapefruit Juice", "Cranberry Juice")
     expectedIngredients.forEach { ingredientName ->
         val quantity = ingredients?.find { it.name == ingredientName }?.quantity ?: 0
         body.append("$quantity\n")
