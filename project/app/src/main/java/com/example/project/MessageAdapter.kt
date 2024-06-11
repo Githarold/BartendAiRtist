@@ -85,9 +85,21 @@ class MessageAdapter(private val messageList: List<Message>, private val chatIns
 
     fun recipeExplain(recipe: String): String{
         val parts = recipe.split("\n\n")
-        println(parts)
         val purerecipe = parts[1]
-        return purerecipe
+        val ingredients = purerecipe.split("\n").map { it.toInt() }
+        val cocktailNames = listOf("Vodka", "Rum", "Gin", "Triple Sec", "Diluted Lemon Syrup", "Orange Juice", "Grapefruit Juice", "Cranberry Juice")
+        val result = StringBuilder()
+
+        // 각 칵테일에 대한 수량을 순회하며 문자열을 생성합니다.
+        for (i in ingredients.indices) {
+            val amount = ingredients[i]
+            if (amount > 0) { // 수량이 0보다 큰 경우에만 결과 문자열에 추가합니다.
+                val cocktailName = cocktailNames.getOrNull(i) ?: "Unknown"
+                result.append("$cocktailName: $amount\n")
+            }
+        }
+
+        return result.toString().trim()
     }
 }
 
