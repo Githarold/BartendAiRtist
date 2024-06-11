@@ -125,15 +125,21 @@ class Chat : AppCompatActivity() {
      */
 
     // 메시지를 보내는 함수
-    fun sendMessage(){
+    fun sendMessage() {
         val question = message_edit!!.getText().toString().trim { it <= ' ' }
-        addToChat(question, Message.SENT_BY_ME, false)
-        CoroutineScope(Dispatchers.Main).launch {
-            callAPI(question)
+        if (question.isEmpty()) {
+            addToChat("아무것도 입력하지 않으셨네요. 어떤 칵테일을 드시고 싶은가요?", Message.SENT_BY_BOT, false)
+            tv_welcome!!.setVisibility(View.GONE)
+        } else {
+            addToChat(question, Message.SENT_BY_ME, false)
+            CoroutineScope(Dispatchers.Main).launch {
+                callAPI(question)
+            }
+            message_edit!!.text.clear()
+            tv_welcome!!.setVisibility(View.GONE)
         }
-        message_edit!!.text.clear()
-        tv_welcome!!.setVisibility(View.GONE)
     }
+
 
     // 채팅 메시지를 추가하는 함수
     fun addToChat(message: String?, sentBy: String?, hasButton: Boolean = false) {
