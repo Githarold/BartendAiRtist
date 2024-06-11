@@ -4,7 +4,12 @@
  */
 package com.example.project
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -23,6 +28,10 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import com.google.gson.Gson
@@ -42,6 +51,7 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.api.run.RunRequest
 import com.aallam.openai.api.thread.ThreadId
 import kotlinx.coroutines.*
+import java.io.OutputStream
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
@@ -53,6 +63,10 @@ class Chat : AppCompatActivity() {
     var messageList: MutableList<Message>? = null
     var messageAdapter: MessageAdapter? = null
     var client: OkHttpClient = OkHttpClient()
+    private val REQUEST_ENABLE_BT = 1
+    private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private var isCommunicating = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -65,8 +79,28 @@ class Chat : AppCompatActivity() {
         manager.setStackFromEnd(true)
         recycler_view!!.setLayoutManager(manager)
         messageList = ArrayList()
-        messageAdapter = MessageAdapter(messageList!!)
+        messageAdapter = MessageAdapter(messageList!!, this)
         recycler_view!!.setAdapter(messageAdapter)
+
+        // 블루투스 권한 요청
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
+                BLUETOOTH_PERMISSION_REQUEST_CODE)
+        }
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            Log.e("Bluetooth", "Device doesn't support Bluetooth")
+            return
+        }
+
+        // 블루투스 활성화 요청
+        if (!bluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
 
         send_btn!!.setOnClickListener(View.OnClickListener {
             sendMessage()
@@ -86,7 +120,6 @@ class Chat : AppCompatActivity() {
 
 
 
-
     /**
      * 함수 정의 부분
      */
@@ -94,11 +127,7 @@ class Chat : AppCompatActivity() {
     // 메시지를 보내는 함수
     fun sendMessage(){
         val question = message_edit!!.getText().toString().trim { it <= ' ' }
-        addToChat(question, Message.SENT_BY_ME)
-//        if (question == "q"){
-//            val result = adjustPumps(Companion.recipeString)
-//            println(result)
-//        }
+        addToChat(question, Message.SENT_BY_ME, false)
         CoroutineScope(Dispatchers.Main).launch {
             callAPI(question)
         }
@@ -107,25 +136,25 @@ class Chat : AppCompatActivity() {
     }
 
     // 채팅 메시지를 추가하는 함수
-    fun addToChat(message: String?, sentBy: String?) {
+    fun addToChat(message: String?, sentBy: String?, hasButton: Boolean = false) {
         runOnUiThread {
-            messageList!!.add(Message(message, sentBy))
+            messageList!!.add(Message(message, sentBy, hasButton))
             messageAdapter!!.notifyDataSetChanged()
             recycler_view!!.smoothScrollToPosition(messageAdapter!!.getItemCount())
         }
     }
 
     // 응답 메시지를 추가하는 함수
-    fun addResponse(response: String?) {
+    fun addResponse(response: String?, hasButton: Boolean = false) {
         messageList!!.removeAt(messageList!!.size - 1)
-        addToChat(response, Message.SENT_BY_BOT)
+        addToChat(response, Message.SENT_BY_BOT, hasButton)
     }
 
     // OpenAI API를 호출, 사용자 입력에 부합하는 칵테일을 추천한 뒤
     // addResponse 함수를 호출해 응답 메시지로 추가하는 함수
     @OptIn(BetaOpenAI::class)
     suspend fun callAPI(question: String?){
-        messageList!!.add(Message("...", Message.SENT_BY_BOT))
+        messageList!!.add(Message("...", Message.SENT_BY_BOT, false))
         val openai = OpenAI( token = MY_SECRET_KEY)
         val real_user_mood = question
 
@@ -243,9 +272,6 @@ class Chat : AppCompatActivity() {
         do {
             delay(1500)
             val retrievedRun = openai.getRun(threadId = thread.id, runId = run.id)
-            if (retrievedRun.status != Status.Completed) {
-                addResponse("Run Status: ${retrievedRun.status}")
-            }
         } while (retrievedRun.status != Status.Completed)
 
         // AI 바텐더의 응답 메시지 처리
@@ -259,16 +285,76 @@ class Chat : AppCompatActivity() {
             val parts = messageText.split("@")
             if (parts.size > 1) {
                 val recommendReason = parts[0]
-                val recipeString = parts[1]
-                addResponse(recommendReason)
+
+                recipeString = parts[1]
+                Log.d("recipeString", recipeString!!)
+
+                val list = recipeString!!.trim('[', ']').split(",").map { it.trim() }
+                println(list)
+
+                var recipe = list.joinToString(separator = "\n")
+                recipeString = "2\n\n$recipe\n\n0\n0\n0\n0\n0\n0\n0\n0"
+                Log.d("recipeString", recipeString!!)
+
+                addResponse(recommendReason, true)
             } else {
-                addResponse("Invalid Response: $messageText")
+                addResponse(messageText, false)
             }
         }else{
-            addResponse("Err.. Try again")
+            addResponse("Err.. Try again", false)
         }
 
 
+    }
+
+    fun sendData(data: String) {
+        synchronized(this) {
+            if (isCommunicating) {
+                Log.d("Bluetooth", "Communication is already in progress.")
+                return@synchronized
+            }
+            isCommunicating = true
+        }
+
+        val communicationThread = Thread {
+            try {
+                val socket = BluetoothManager.getBluetoothSocket()
+                if (socket == null || !socket.isConnected) {
+                    runOnUiThread {
+                        Toast.makeText(this, "Not connected to any device", Toast.LENGTH_SHORT).show()
+                    }
+                    return@Thread
+                }
+
+                val outStream: OutputStream = socket.outputStream
+                outStream.write(data.toByteArray())
+                Log.d("Bluetooth", "Data sent: $data")
+
+                // 수신 버퍼 설정
+                val buffer = ByteArray(1024)
+                val inStream = socket.inputStream
+                val bytesRead = inStream.read(buffer)
+                if (bytesRead == -1) {
+                    Log.d("Bluetooth", "Peer socket closed")
+                } else {
+                    val receivedData = String(buffer, 0, bytesRead)
+                    Log.d("Bluetooth", "Data received: $receivedData")
+
+                    runOnUiThread {
+                        Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                synchronized(this) {
+                    isCommunicating = false
+                }
+                Thread.currentThread().interrupt()
+            }
+        }
+        communicationThread.start()
     }
 
     // 클래스 레벨에서 접근 가능한 객체 멤버 선언

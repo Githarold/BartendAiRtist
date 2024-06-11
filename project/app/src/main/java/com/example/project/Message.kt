@@ -8,10 +8,12 @@ package com.example.project
 class Message {
     var message: String? = null
     var sentBy: String? = null
+    var hasButton: Boolean = false
 
-    constructor(message: String?, sentBy: String?) {
+    constructor(message: String?, sentBy: String?, hasButton: Boolean = false) {
         this.message = message
         this.sentBy = sentBy
+        this.hasButton = hasButton
     }
 
     constructor()

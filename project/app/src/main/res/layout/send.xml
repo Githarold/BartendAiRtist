@@ -11,7 +11,7 @@
             android:layout_marginEnd="80dp"
             android:background="@drawable/btn_background"
             android:backgroundTint="@color/lightPurple"
-            android:orientation="horizontal"
+            android:orientation="vertical"
             android:padding="8dp">
 
                 <TextView
@@ -23,6 +23,17 @@
                     android:textSize="18sp" />
 
         </LinearLayout>
+
+        <Button
+            android:id="@+id/select_button"
+            android:layout_width="wrap_content"
+            android:layout_height="42dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginEnd="-1dp"
+            android:layout_marginBottom="0dp"
+            android:layout_below="@id/received_chat_view"
+            android:layout_alignStart="@id/received_chat_view"
+            android:text="Select" />
 
         <LinearLayout
             android:layout_width="wrap_content"
@@ -42,5 +53,6 @@
                     android:text="사용자가 보내는 메시지"/>
 
         </LinearLayout>
+
 
 </RelativeLayout>
