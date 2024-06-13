@@ -295,14 +295,20 @@ class Chat : AppCompatActivity() {
                 recipeString = parts[1]
                 Log.d("recipeString", recipeString!!)
 
-                val list = recipeString!!.trim('[', ']').split(",").map { it.trim() }
+                val list = recipeString!!.trim('[', ']').split(",").map { it.trim().toInt()}
                 println(list)
 
-                var recipe = list.joinToString(separator = "\n")
-                recipeString = "2\n\n$recipe\n\n0\n0\n0\n0\n0\n0\n0\n0"
-                Log.d("recipeString", recipeString!!)
+                if (list.sum() > 7) {
+                    println("recipe is more than 7")
+                    addResponse(recommendReason, false)
+                } else {
 
-                addResponse(recommendReason, true)
+                    var recipe = list.joinToString(separator = "\n")
+                    recipeString = "2\n\n$recipe\n\n0\n0\n0\n0\n0\n0\n0\n0"
+                    Log.d("recipeString", recipeString!!)
+
+                    addResponse(recommendReason, true)
+                }
             } else {
                 addResponse(messageText, false)
             }
