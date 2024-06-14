@@ -10,7 +10,7 @@ BartendAiRtist에 오신 것을 환영합니다, 당신의 취향과 기분에 �
 
 ## 📸 실물 사진
 
-![KakaoTalk_20240614_203643350](https://github.com/Githarold/BartendAiRtist/assets/101968287/506ef0d0-81f2-4841-b15b-39b1d6479a41)
+<img src="https://github.com/Githarold/BartendAiRtist/assets/101968287/506ef0d0-81f2-4841-b15b-39b1d6479a41" alt="실물 사진" width="25%">
 
 
 ## Table of Contents
