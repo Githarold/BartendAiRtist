@@ -33,6 +33,12 @@ BartendAiRtist를 통해 칵테일을 즐기고 싶다면 다음 단계를 따�
 4. **선택하기:** AI 제안, 커스텀 옵션, 또는 칵테일 리스트에서 선호하는 칵테일을 선택하세요.
 5. **모든 것을 잊고 취하기:** 우리의 스마트 바텐더가 칵테일을 준비하는 것을 지켜보세요. 건배!
 
+## 📽️ Demo Results
+
+아래는 BartendAiRtist의 시연 영상입니다. BartendAiRtist가 어떻게 작동하는지 확인해보세요!
+
+[![BartendAiRtist 시연](https://img.youtube.com/vi/AzKcaZExot8/0.jpg)](https://youtu.be/AzKcaZExot8)
+
 ## 💡 Contributing
 
 우리는 항상 BartendAiRtist를 개선하고 새로운 기능이나 기존 기능에 대한 피드백을 환영합니다. 새로운 아이디어가 있거나 피드백을 공유하고 싶다면, 이슈를 열거나 Pull request를 제출해 주세요.
