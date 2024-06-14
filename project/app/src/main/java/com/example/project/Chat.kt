@@ -17,23 +17,43 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import org.json.JSONException
+import org.json.JSONObject
 import java.io.IOException
+import okhttp3.OkHttpClient;
+import okhttp3.RequestBody
+import okhttp3.Request
+import okhttp3.Request.Builder
+import okhttp3.MediaType
+import okhttp3.MediaType.Companion.toMediaType
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
+import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import okhttp3.RequestBody.Companion.toRequestBody
+import org.json.JSONArray
+import com.google.gson.Gson
+import java.util.concurrent.TimeUnit
+import com.aallam.openai.*
 import com.aallam.openai.api.BetaOpenAI
+import com.aallam.openai.client.*
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.api.assistant.*
+import com.aallam.openai.api.core.RequestOptions
 import com.aallam.openai.api.core.Role
 import com.aallam.openai.api.core.Status
+import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.message.MessageContent
 import com.aallam.openai.api.message.MessageRequest
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.api.run.RunRequest
+import com.aallam.openai.api.thread.ThreadId
 import kotlinx.coroutines.*
 import java.io.OutputStream
+import kotlin.math.roundToInt
+import kotlin.time.Duration.Companion.seconds
 
 class Chat : AppCompatActivity() {
     var recycler_view: RecyclerView? = null
@@ -42,6 +62,7 @@ class Chat : AppCompatActivity() {
     var send_btn: Button? = null
     var messageList: MutableList<Message>? = null
     var messageAdapter: MessageAdapter? = null
+    var client: OkHttpClient = OkHttpClient()
     private val REQUEST_ENABLE_BT = 1
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
@@ -80,8 +101,6 @@ class Chat : AppCompatActivity() {
             val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
             startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
         }
-
-        val receivedData = intent.getStringExtra("Received_Data") ?: ""
 
         send_btn!!.setOnClickListener(View.OnClickListener {
             sendMessage()
@@ -185,7 +204,7 @@ class Chat : AppCompatActivity() {
                 instructions = """
                     You are an AI bartender. First, receive the inventory as a dictionary named 'example_dict',
                     then consider the user's mood and preferences to recommend a cocktail.
-                    Ensure that the total volume of ingredients does not exceed 210ml. Use a specific delimiter (@) to separate the cocktail recommendation from the recipe,
+                    Ensure that the total volume of ingredients does not exceed 250ml. Use a specific delimiter (@) to separate the cocktail recommendation from the recipe,
                     which should be provided in a structured list format, including two dictionaries:
                     one for the "Order" of ingredients and another for the "Integer" number of 30ml pumps required for each ingredient.
                 """.trimIndent()
@@ -352,6 +371,7 @@ class Chat : AppCompatActivity() {
 
     // 클래스 레벨에서 접근 가능한 객체 멤버 선언
     companion object {
+        val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
         private const val MY_SECRET_KEY = ""
         var recipeString: String? = null
     }

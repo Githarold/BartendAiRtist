@@ -16,11 +16,13 @@
         android:background="@drawable/btn_background"
         android:layout_margin="5dp"
         android:textColor="#FFFFFF"/>
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
         android:weightSum="10">
+
         <ImageView
             android:id="@+id/cocktail_img"
             android:layout_marginTop="10dp"
@@ -29,19 +31,23 @@
             android:layout_weight="4"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"/>
+
         <View
             android:layout_width="match_parent"
             android:layout_height="5dp"
             android:layout_marginTop="10dp"
             android:background="#D4D4D3"/>
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="6"
             android:orientation="vertical">
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="70dp">
+
                 <TextView
                     android:id="@+id/cocktail_name"
                     android:layout_width="wrap_content"
@@ -52,6 +58,7 @@
                     android:layout_alignParentLeft="true"
                     android:gravity="center"
                     android:textStyle="bold"/>
+
                 <androidx.appcompat.widget.AppCompatButton
                     android:id="@+id/select_cocktail"
                     android:layout_width="wrap_content"
@@ -74,13 +81,18 @@
                 android:layout_marginTop="10dp"
                 android:layout_marginStart="10dp"/>
 
-            <TextView
-                android:id="@+id/textView"
+            <ScrollView
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="TextView"
-                android:layout_margin="10dp"
-                android:textSize="20dp"/>
+                android:layout_margin="10dp">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TextView"
+                    android:textSize="20dp"/>
+            </ScrollView>
 
         </LinearLayout>
 
