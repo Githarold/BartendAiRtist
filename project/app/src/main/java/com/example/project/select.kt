@@ -12,6 +12,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -104,8 +105,16 @@ class select : AppCompatActivity() {
 
         val send_data = "$head\n\n$recipe\n\n$order"
         selectBtn.setOnClickListener {
-            sendData(send_data)
-            Log.d("recipe", send_data)
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("해당 칵테일을 제조하시겠습니까?")
+                .setPositiveButton("예") { dialog, id ->
+                    sendData(send_data)
+                    Log.d("recipe", send_data)
+                }
+                .setNegativeButton("아니오") { dialog, id ->
+                    dialog.dismiss()
+                }
+            builder.create().show()
         }
 
         val backBtn = findViewById<Button>(R.id.backBtn)
