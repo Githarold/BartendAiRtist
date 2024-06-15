@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -89,8 +90,16 @@ class SetBuildOrder : AppCompatActivity() {
             val ingredientOrderList = getIngredientOrderList(currentList)
             val formattedDataList = getIngredientQuantityList(receivedList)
             val formattedData = formatDataForCommunicationWithOrder(formattedDataList, ingredientOrderList)
-            Log.d("formattedData", formattedData)
-            sendData(formattedData)
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("해당 칵테일을 제조하시겠습니까?")
+                .setPositiveButton("예") { dialog, id ->
+                    sendData(formattedData)
+                    Log.d("formattedData", formattedData)
+                }
+                .setNegativeButton("아니오") { dialog, id ->
+                    dialog.dismiss()
+                }
+            builder.create().show()
         }
     }
 

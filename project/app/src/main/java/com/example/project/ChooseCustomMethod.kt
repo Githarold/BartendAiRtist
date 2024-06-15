@@ -10,6 +10,7 @@ import android.util.Log
 import android.widget.Button
 import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
@@ -62,8 +63,16 @@ class ChooseCustomMethod : AppCompatActivity() {
         val stiringBtn = findViewById<Button>(R.id.stiringBtn)
         // stiringBtn 누르면 바로 서버로 보냄
         stiringBtn.setOnClickListener {
-            Log.d("formattedData", formattedData)
-            sendData("$formattedData\n0\n0\n0\n0\n0\n0\n0\n0")
+                val builder = AlertDialog.Builder(this)
+                builder.setMessage("해당 칵테일을 제조하시겠습니까?")
+                    .setPositiveButton("예") { dialog, id ->
+                        sendData("$formattedData\n0\n0\n0\n0\n0\n0\n0\n0")
+                        Log.d("formattedData", formattedData)
+                    }
+                    .setNegativeButton("아니오") { dialog, id ->
+                        dialog.dismiss()
+                    }
+                builder.create().show()
         }
     }
 
