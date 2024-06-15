@@ -44,7 +44,7 @@ class Pairing : AppCompatActivity() {
                                 Manifest.permission.BLUETOOTH_CONNECT
                             ) == PackageManager.PERMISSION_GRANTED) {
                             val deviceName = it.name
-                            if (deviceName != null) {
+                            if (deviceName != null && deviceName == "SmartBartender") {
                                 val deviceAddress = it.address
                                 val deviceInfo = "$deviceName - $deviceAddress"
                                 if (discoveredDevices.add(deviceInfo)) {
