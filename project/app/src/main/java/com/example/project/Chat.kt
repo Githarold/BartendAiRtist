@@ -4,7 +4,12 @@
  */
 package com.example.project
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.widget.Button
 import android.widget.EditText
@@ -23,6 +28,10 @@ import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
+import android.widget.LinearLayout
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import okhttp3.RequestBody.Companion.toRequestBody
 import org.json.JSONArray
 import com.google.gson.Gson
@@ -42,6 +51,7 @@ import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.api.run.RunRequest
 import com.aallam.openai.api.thread.ThreadId
 import kotlinx.coroutines.*
+import java.io.OutputStream
 import kotlin.math.roundToInt
 import kotlin.time.Duration.Companion.seconds
 
@@ -53,6 +63,10 @@ class Chat : AppCompatActivity() {
     var messageList: MutableList<Message>? = null
     var messageAdapter: MessageAdapter? = null
     var client: OkHttpClient = OkHttpClient()
+    private val REQUEST_ENABLE_BT = 1
+    private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private var isCommunicating = false
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -65,8 +79,28 @@ class Chat : AppCompatActivity() {
         manager.setStackFromEnd(true)
         recycler_view!!.setLayoutManager(manager)
         messageList = ArrayList()
-        messageAdapter = MessageAdapter(messageList!!)
+        messageAdapter = MessageAdapter(messageList!!, this)
         recycler_view!!.setAdapter(messageAdapter)
+
+        // 블루투스 권한 요청
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
+                BLUETOOTH_PERMISSION_REQUEST_CODE)
+        }
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            Log.e("Bluetooth", "Device doesn't support Bluetooth")
+            return
+        }
+
+        // 블루투스 활성화 요청
+        if (!bluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
 
         send_btn!!.setOnClickListener(View.OnClickListener {
             sendMessage()
@@ -86,46 +120,47 @@ class Chat : AppCompatActivity() {
 
 
 
-
     /**
      * 함수 정의 부분
      */
 
     // 메시지를 보내는 함수
-    fun sendMessage(){
+    fun sendMessage() {
         val question = message_edit!!.getText().toString().trim { it <= ' ' }
-        addToChat(question, Message.SENT_BY_ME)
-//        if (question == "q"){
-//            val result = adjustPumps(Companion.recipeString)
-//            println(result)
-//        }
-        CoroutineScope(Dispatchers.Main).launch {
-            callAPI(question)
+        if (question.isEmpty()) {
+            addToChat("아무것도 입력하지 않으셨네요. 어떤 칵테일을 드시고 싶은가요?", Message.SENT_BY_BOT, false)
+            tv_welcome!!.setVisibility(View.GONE)
+        } else {
+            addToChat(question, Message.SENT_BY_ME, false)
+            CoroutineScope(Dispatchers.Main).launch {
+                callAPI(question)
+            }
+            message_edit!!.text.clear()
+            tv_welcome!!.setVisibility(View.GONE)
         }
-        message_edit!!.text.clear()
-        tv_welcome!!.setVisibility(View.GONE)
     }
 
+
     // 채팅 메시지를 추가하는 함수
-    fun addToChat(message: String?, sentBy: String?) {
+    fun addToChat(message: String?, sentBy: String?, hasButton: Boolean = false) {
         runOnUiThread {
-            messageList!!.add(Message(message, sentBy))
+            messageList!!.add(Message(message, sentBy, hasButton))
             messageAdapter!!.notifyDataSetChanged()
             recycler_view!!.smoothScrollToPosition(messageAdapter!!.getItemCount())
         }
     }
 
     // 응답 메시지를 추가하는 함수
-    fun addResponse(response: String?) {
+    fun addResponse(response: String?, hasButton: Boolean = false) {
         messageList!!.removeAt(messageList!!.size - 1)
-        addToChat(response, Message.SENT_BY_BOT)
+        addToChat(response, Message.SENT_BY_BOT, hasButton)
     }
 
     // OpenAI API를 호출, 사용자 입력에 부합하는 칵테일을 추천한 뒤
     // addResponse 함수를 호출해 응답 메시지로 추가하는 함수
     @OptIn(BetaOpenAI::class)
     suspend fun callAPI(question: String?){
-        messageList!!.add(Message("...", Message.SENT_BY_BOT))
+        messageList!!.add(Message("...", Message.SENT_BY_BOT, false))
         val openai = OpenAI( token = MY_SECRET_KEY)
         val real_user_mood = question
 
@@ -140,20 +175,26 @@ class Chat : AppCompatActivity() {
             "Triple Sec" to 500, "Cranberry Juice" to 900, "Grapefruit Juice" to 1000, "Orange Juice" to 800
         )
 
-        val exampleUserMood1 = "오늘따라 뭔가 시원하고 달콤한 칵테일이 마시고 싶어. 피로도 풀리고 기분도 좋아지는 그런 종류로."
-        val exampleGptResponse1 = "그런 기분에 딱 맞는 칵테일로 '모히토'를 추천드릴게요. 신선한 민트와 라임이 들어가 상큼하고 시원한 맛이 특징이랍니다. 럼 주를 기반으로 해서 달콤한 맛도 느끼실 수 있고요.@[{'Rum': 1, 'Diluted Lemon Juice': 2, 'Orange Juice': 3}, {'Rum': 2, 'Diluted Lemon Juice': 3, 'Orange Juice': 4}]"
+        val exampleUserMood1 = "오늘은 상쾌하고 열대의 풍미가 가득한 칵테일을 마시고 싶어요."
+        val exampleGptResponse1 = "그런 날에는 '허리케인'을 추천드릴게요. 럼과 오렌지 주스가 어우러져 상쾌하고 달콤한 맛이 특징입니다. 열대 지방의 느낌을 가득 느끼실 수 있을 거예요.@[0,2,0,0,0,2,0,1]"
 
-        val exampleUserMood2 = "오늘 정말 무더운 날이네요. 뭔가 시원하고 상쾌한 음료가 마시고 싶어요."
-        val exampleGptResponse2 = "열대의 상쾌함을 원하신다면 '트로피칼 펀치'를 추천드리고 싶어요. 이 칵테일은 자몽 주스와 오렌지 주스를 기반으로 하고 있어서 상큼하고, 럼과 트리플 섹이 더해져 풍미가 풍부합니다. 정말 열대 지방의 분위기를 느낄 수 있죠.@[{'Rum': 1, 'Orange Juice': 2, 'Grapefruit Juice': 3, 'Triple Sec': 4, 'Cranberry Juice': 5}, {'Rum': 2, 'Orange Juice': 4, 'Grapefruit Juice': 4, 'Triple Sec': 1, 'Cranberry Juice': 2}]"
+        val exampleUserMood2 = "오늘 뭔가 상큼하고 쌉쌀한 맛이 나는 칵테일이 생각나네요."
+        val exampleGptResponse2 = "그렇다면 '그레이 하운드'를 추천드려요. 보드카와 자몽 주스가 어우러져 상큼하면서도 쌉쌀한 맛이 매력적인 칵테일입니다.@[2,0,0,0,0,0,0,3]"
 
-        val exampleUserMood3 = "주말 파티를 위해 강렬한 칵테일이 필요해요."
-        val exampleGptResponse3 = "주말 파티에는 '마가리타'를 추천드릴게요. 테킬라와 라임 주스, 트리플 섹이 조화를 이루어 강렬하면서도 상쾌한 맛을 느낄 수 있습니다.@[{'Tequila': 1, 'Triple Sec': 1, 'Lime Juice': 1}, {'Tequila': 2, 'Triple Sec': 2, 'Lime Juice': 2}]"
+        val exampleUserMood3 = "오늘은 좀 세련된 분위기의 칵테일을 마시고 싶어요."
+        val exampleGptResponse3 = "세련된 분위기를 원하신다면 '코스모폴리탄'이 제격입니다. 보드카와 크랜베리 주스, 그리고 트리플 섹이 어우러져 우아한 맛을 느끼실 수 있습니다.@[2,0,0,1,0,0,0,1]"
 
-        val exampleUserMood4 = "친구와 함께 마실 수 있는 달콤한 칵테일을 추천해줘."
-        val exampleGptResponse4 = "친구와 함께 마시기 좋은 칵테일로 '피치 벨리니'를 추천드릴게요. 피치 퓌레와 샴페인이 어우러져 달콤하고 청량한 맛을 느낄 수 있습니다.@[{'Peach Puree': 1, 'Champagne': 3}, {'Peach Puree': 1, 'Champagne': 4}]"
+        val exampleUserMood4 = "오늘은 강렬한 맛이 나는 칵테일이 마시고 싶어요."
+        val exampleGptResponse4 = "그렇다면 '레드 데빌'을 추천드립니다. 보드카와 크랜베리 주스, 그리고 레몬 주스가 어우러져 강렬하고 상큼한 맛을 느끼실 수 있습니다.@[2,0,0,0,1,0,0,4]"
 
-        val exampleUserMood5 = "저녁 식사 후에 마실 수 있는 부드러운 칵테일을 원해요."
-        val exampleGptResponse5 = "저녁 식사 후에는 '화이트 러시안'을 추천드릴게요. 보드카, 커피 리큐어, 크림이 어우러져 부드럽고 진한 맛을 느낄 수 있습니다.@[{'Vodka': 2, 'Coffee Liqueur': 1, 'Cream': 1}, {'Vodka': 3, 'Coffee Liqueur': 2, 'Cream': 2}]"
+        val exampleUserMood5 = "오늘은 깔끔하면서도 우아한 칵테일을 마시고 싶어요."
+        val exampleGptResponse5 = "그렇다면 '화이트 레이디'를 추천드려요. 진과 트리플 섹, 그리고 레몬 주스가 어우러져 깔끔하고 우아한 맛을 자랑하는 칵테일입니다.@[0,0,2,1,1,0,0,0]"
+
+        val exampleUserMood6 = "친구들과 함께 즐길 수 있는 재미있는 칵테일이 필요해요."
+        val exampleGptResponse6 = "그렇다면 '롱 비치 아이스티'를 추천드릴게요. 보드카, 럼, 진, 그리고 크랜베리 주스가 어우러져 강렬하면서도 상쾌한 맛을 느끼실 수 있습니다.@[1,1,1,1,1,0,0,0]"
+
+        val exampleUserMood7 = "오늘은 상큼하고 달콤한 칵테일이 생각나요."
+        val exampleGptResponse7 = "상큼하고 달콤한 맛을 원하신다면 '레몬 드롭 마티니'를 추천드립니다. 보드카와 레몬 주스, 그리고 트리플 섹이 어우러져 상큼하면서도 달콤한 맛이 일품인 칵테일입니다.@[2,0,0,1,1,0,0,0]"
 
         // AI 바텐더 Assistant 생성
         val batender = openai.assistant(
@@ -193,11 +234,13 @@ class Chat : AppCompatActivity() {
 
         // AI 바텐더에게 실행 요청
         val run = openai.createRun(
-                threadId = thread.id,
-                request = RunRequest(
-                    assistantId = batender.id,
-                    instructions ="""
-                          Example 1:
+            threadId = thread.id,
+            request = RunRequest(
+                assistantId = batender.id,
+                instructions ="""
+                            Ingredients in order: [Vodka, Rum, Gin, Triple Sec, Diluted Lemon Juice, Orange Juice, Grapefruit Juice, Cranberry Juice]
+
+                            Example 1:
                             Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood1'
                             Output: $exampleGptResponse1
                             
@@ -217,19 +260,24 @@ class Chat : AppCompatActivity() {
                             Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood5'
                             Output: $exampleGptResponse5
                             
+                            Example 6:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood6'
+                            Output: $exampleGptResponse6
+                            
+                            Example 7:
+                            Input: Inventory - $exampleInputDict, Mood/Preference - '$exampleUserMood7'
+                            Output: $exampleGptResponse7 
+                            
                             You have to respond in Korean:
                             Input: Inventory - $realInputDict, Mood/Preference - '$real_user_mood'
                             Output: 
                                             """.trimIndent())
-            )
+        )
 
         // 실행 결과가 완료될 때까지 대기
         do {
             delay(1500)
             val retrievedRun = openai.getRun(threadId = thread.id, runId = run.id)
-            if (retrievedRun.status != Status.Completed) {
-                addResponse("Run Status: ${retrievedRun.status}")
-            }
         } while (retrievedRun.status != Status.Completed)
 
         // AI 바텐더의 응답 메시지 처리
@@ -243,50 +291,82 @@ class Chat : AppCompatActivity() {
             val parts = messageText.split("@")
             if (parts.size > 1) {
                 val recommendReason = parts[0]
-                val recipeString = parts[1]
-                addResponse(recommendReason)
+
+                recipeString = parts[1]
+                Log.d("recipeString", recipeString!!)
+
+                val list = recipeString!!.trim('[', ']').split(",").map { it.trim().toInt()}
+                println(list)
+
+                if (list.sum() > 7) {
+                    println("recipe is more than 7")
+                    addResponse(recommendReason, false)
+                } else {
+
+                    var recipe = list.joinToString(separator = "\n")
+                    recipeString = "2\n\n$recipe\n\n0\n0\n0\n0\n0\n0\n0\n0"
+                    Log.d("recipeString", recipeString!!)
+
+                    addResponse(recommendReason, true)
+                }
             } else {
-                addResponse("Invalid Response: $messageText")
+                addResponse(messageText, false)
             }
         }else{
-            addResponse("Err.. Try again")
+            addResponse("Err.. Try again", false)
         }
 
 
     }
 
-    fun adjustPumps(recipeString: String?): Pair<String, Map<String, Int>>? {
-        try {
-            val recipe = recipeString!!.removeSurrounding("(", ")").split(", ") // 문자열을 분해하여 파싱
-            val recipeName = recipe[0].removeSurrounding("'")
-            val ingredientsAndPumps = recipe[1].removeSurrounding("{", "}")
-                .split(", ")
-                .associate {
-                    val (ingredient, pumps) = it.split(": ")
-                    ingredient.removeSurrounding("'") to pumps.toInt()
-                }
-
-            val totalPumps = ingredientsAndPumps.values.sum()
-            val targetPumps = 7
-
-            if (totalPumps > targetPumps) {
-                addResponse("Adjusting recipe...")
-                addResponse("Original recipe: $ingredientsAndPumps")
-
-                val adjustmentRatio = targetPumps.toDouble() / totalPumps
-                val adjustedPumps = ingredientsAndPumps.mapValues { (_, pumps) ->
-                    (pumps * adjustmentRatio).roundToInt()
-                }
-
-                addResponse("Adjusted recipe: $adjustedPumps")
-                return Pair(recipeName, adjustedPumps)
-            } else {
-                return Pair(recipeName, ingredientsAndPumps)
+    fun sendData(data: String) {
+        synchronized(this) {
+            if (isCommunicating) {
+                Log.d("Bluetooth", "Communication is already in progress.")
+                return@synchronized
             }
-        } catch (e: Exception) {
-            addResponse("레시피 파싱 오류: $e")
-            return null
+            isCommunicating = true
         }
+
+        val communicationThread = Thread {
+            try {
+                val socket = BluetoothManager.getBluetoothSocket()
+                if (socket == null || !socket.isConnected) {
+                    runOnUiThread {
+                        Toast.makeText(this, "Not connected to any device", Toast.LENGTH_SHORT).show()
+                    }
+                    return@Thread
+                }
+
+                val outStream: OutputStream = socket.outputStream
+                outStream.write(data.toByteArray())
+                Log.d("Bluetooth", "Data sent: $data")
+
+                // 수신 버퍼 설정
+                val buffer = ByteArray(1024)
+                val inStream = socket.inputStream
+                val bytesRead = inStream.read(buffer)
+                if (bytesRead == -1) {
+                    Log.d("Bluetooth", "Peer socket closed")
+                } else {
+                    val receivedData = String(buffer, 0, bytesRead)
+                    Log.d("Bluetooth", "Data received: $receivedData")
+
+                    runOnUiThread {
+                        Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                synchronized(this) {
+                    isCommunicating = false
+                }
+                Thread.currentThread().interrupt()
+            }
+        }
+        communicationThread.start()
     }
 
     // 클래스 레벨에서 접근 가능한 객체 멤버 선언

@@ -1,29 +1,61 @@
-/**
- * SetBuildOrder.kt
- * 사용자에게 빌드 순서를 정하게 하는 액티비티
- * 드래그 앤 드롭으로 빌드 순서를 결정한 뒤 서버에 데이터를 보낸다
- */
-
 package com.example.project
 
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothSocket
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
+import android.util.Log
 import android.widget.Button
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
-import java.net.Socket
+import java.io.OutputStream
 
 class SetBuildOrder : AppCompatActivity() {
-    override fun onCreate(savedInstanceState: Bundle?){
+    private val REQUEST_ENABLE_BT = 1
+    private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private var isCommunicating = false
+
+    override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_setbuildorder)
+
+        // 블루투스 권한 요청
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.BLUETOOTH_CONNECT
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            ActivityCompat.requestPermissions(
+                this,
+                arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
+                BLUETOOTH_PERMISSION_REQUEST_CODE
+            )
+        }
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            Log.e("Bluetooth", "Device doesn't support Bluetooth")
+            return
+        }
+
+        // 블루투스 활성화 요청
+        if (!bluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
 
         // 시스템 바 인셋 적용
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
@@ -37,7 +69,7 @@ class SetBuildOrder : AppCompatActivity() {
         // 양이 0인 재료(즉, 선택하지 않은 재료)는 제외
         val filteredList = ArrayList(receivedList?.filter { it.quantity > 0 } ?: listOf())
 
-        val adapter = SetBuildAdapter(filteredList)
+        val adapter = SetBuildOrderAdapter(filteredList)
         val recyclerView: RecyclerView = findViewById(R.id.cocktail_ingredients_list)
         recyclerView.adapter = adapter
         recyclerView.layoutManager = LinearLayoutManager(this)
@@ -58,68 +90,101 @@ class SetBuildOrder : AppCompatActivity() {
             val ingredientOrderList = getIngredientOrderList(currentList)
             val formattedDataList = getIngredientQuantityList(receivedList)
             val formattedData = formatDataForCommunicationWithOrder(formattedDataList, ingredientOrderList)
-            connectToServer(formattedData)
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("해당 칵테일을 제조하시겠습니까?")
+                .setPositiveButton("예") { dialog, id ->
+                    sendData(formattedData)
+                    Log.d("formattedData", formattedData)
+                }
+                .setNegativeButton("아니오") { dialog, id ->
+                    dialog.dismiss()
+                }
+            builder.create().show()
         }
     }
-
 
     /**
      * 함수 정의 부분
      */
-    private fun  connectToServer(dataToSend:String){
-        Thread {
+    fun sendData(data: String) {
+        synchronized(this) {
+            if (isCommunicating) {
+                Log.d("Bluetooth", "Communication is already in progress.")
+                return@synchronized
+            }
+            isCommunicating = true
+        }
+
+        val communicationThread = Thread {
             try {
-                val socket = Socket("10.0.2.2", 3000)
-                socket.use { s ->
-                    val outStream = s.outputStream
-                    val inStream = s.inputStream
+                val socket = BluetoothManager.getBluetoothSocket()
+                if (socket == null || !socket.isConnected) {
+                    runOnUiThread {
+                        Toast.makeText(this, "Not connected to any device", Toast.LENGTH_SHORT).show()
+                    }
+                    return@Thread
+                }
 
-                    val data = dataToSend
-                    outStream.write(data.toByteArray())
+                val outStream: OutputStream = socket.outputStream
+                outStream.write(data.toByteArray())
+                Log.d("Bluetooth", "Data sent: $data")
 
-                    // 데이터 수신을 위한 버퍼 준비
-                    val dataArr = ByteArray(1024)
-                    val numBytes = inStream.read(dataArr)
-                    if (numBytes != -1) {
-                        val receivedData = String(dataArr, 0, numBytes)
-                        runOnUiThread {
-                            println("data : $receivedData")
-                        }
-                    } else {
-                        println("No data received")
+                // 수신 버퍼 설정
+                val buffer = ByteArray(1024)
+                val inStream = socket.inputStream
+                val bytesRead = inStream.read(buffer)
+                if (bytesRead == -1) {
+                    Log.d("Bluetooth", "Peer socket closed")
+                } else {
+                    val receivedData = String(buffer, 0, bytesRead)
+                    Log.d("Bluetooth", "Data received: $receivedData")
+
+                    runOnUiThread {
+                        Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
                     }
                 }
+
             } catch (e: IOException) {
                 e.printStackTrace()
+            } finally {
+                synchronized(this) {
+                    isCommunicating = false
+                }
+                Thread.currentThread().interrupt()
             }
-        }.start()
+        }
+        communicationThread.start()
     }
 }
+
+/**
+ * 함수 정의 부분
+ */
 
 // 빌드 순서를 내용으로 하는 리스트를 만드는 함수
 fun getIngredientOrderList(currentList: List<Ingredient>): String {
-    val stringBuilder = StringBuilder()
     val totalIngredients = 8 // 전체 재료 개수
-    for (ingredient in currentList) {
-        stringBuilder.append("${ingredient.quantity}\n")
+    val orderList = MutableList(totalIngredients) { 0 }
+
+    for ((index, ingredient) in currentList.withIndex()) {
+        val position = ingredient.order?: continue
+        if (position in 1..totalIngredients) {
+            orderList[position - 1] = index + 1
+        }
     }
-    // 나머지 요소는 빈 줄로 채움
-    val remainingEmptyLines = totalIngredients - currentList.size
-    repeat(remainingEmptyLines) {
-        stringBuilder.append("0\n")
-    }
-    return stringBuilder.toString()
+
+    return orderList.joinToString(separator = "\n")
 }
 
-// 서버로 보내기 위해 데이터 형식을 알밪게 바꿔주는 함수
+
+// 서버로 보내기 위해 데이터 형식을 알맞게 바꿔주는 함수
 fun getIngredientQuantityList(ingredients: ArrayList<Ingredient>?): String {
-    //TODO
     val header = "3" // 순서 포함하므로 헤드 3
 
     val body = StringBuilder()
 
     // ingredients는 항상 ex1에서 ex8까지 고정된 순서로 있다고 가정
-    val expectedIngredients = listOf("ex1", "ex2", "ex3", "ex4", "ex5", "ex6", "ex7", "ex8")
+    val expectedIngredients = listOf("Vodka", "Rum", "Gin", "Triple Sec", "Diluted Lemon Syrup", "Orange Juice", "Grapefruit Juice", "Cranberry Juice")
     expectedIngredients.forEach { ingredientName ->
         val quantity = ingredients?.find { it.name == ingredientName }?.quantity ?: 0
         body.append("$quantity\n")
@@ -128,14 +193,14 @@ fun getIngredientQuantityList(ingredients: ArrayList<Ingredient>?): String {
     return "$header\n\n${body.toString()}"
 }
 
-// 서버로 보내기 위해 데이터 형식을 알밪게 바꿔주는 함수(순서 포함)
+// 서버로 보내기 위해 데이터 형식을 알맞게 바꿔주는 함수(순서 포함)
 fun formatDataForCommunicationWithOrder(receivedList: String, ingredientOrderList: String): String {
     val formattedData = StringBuilder()
 
     formattedData.append(receivedList)
 
     // ingredientOrderList를 추가
-    formattedData.append("\n\n") // '\n\n' 추가
+    formattedData.append("\n") // '\n\n' 추가
     formattedData.append(ingredientOrderList)
 
     return formattedData.toString()

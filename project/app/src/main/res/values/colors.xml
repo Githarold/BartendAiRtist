@@ -3,4 +3,21 @@
     <color name="black">#FF000000</color>
     <color name="white">#FFFFFFFF</color>
     <color name="lightPurple">#FFBB86FC</color>
+    <!-- UOS Colors -->
+    <color name="uos_signature_blue">#004094</color>
+    <color name="uos_blue">#005EB8</color>
+    <color name="uos_blue_light">#0077C8</color>
+    <color name="uos_blue_soft">#9BCBEB</color>
+    <color name="uos_blue_mist">#B9D9EB</color>
+    <color name="uos_emerald">#00B398</color>
+    <color name="uos_emerald_light">#2CD5C4</color>
+    <color name="uos_emerald_soft">#9CDBD9</color>
+    <color name="uos_emerald_mist">#DCEBEC</color>
+    <color name="uos_gray">#63666A</color>
+    <color name="uos_gray_light">#BBBDBC</color>
+    <color name="uos_gray_soft">#D9D9D6</color>
+    <color name="uos_gray_mist">#E7E7E0</color>
+    <color name="uos_gold">#C6A664</color>
+    <color name="uos_silver">#A0A0A0</color>
+    <color name="uos_bronze">#A86D3E</color>
 </resources>

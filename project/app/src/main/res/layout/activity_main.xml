@@ -8,6 +8,14 @@
     tools:context=".MainActivity">
 
     <Button
+        android:id="@+id/PairingBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Pairing"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"/>
+
+    <Button
         android:id="@+id/chooseBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -33,6 +41,15 @@
         android:layout_height="wrap_content"
         android:text="칵테일 커스텀하기"
         app:layout_constraintTop_toBottomOf="@id/recommendBtn"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/devBtn"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="개발자 모드"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />

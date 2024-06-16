@@ -1,43 +1,68 @@
-/**
- * select.kt
- * 칵테일 선택하기 액티비티
- * json 파일로부터 칵테일 이름, 상세 설명, 레시피를 읽어 화면에 표시한다
- * 사용자는 해당 액티비티에서 칵테일을 선택할 수 있다. 즉, 서버로 데이터를 전송한다
- */
-
-
 package com.example.project
 
-import android.content.Context
+import android.Manifest
+import android.bluetooth.BluetoothAdapter
+import android.bluetooth.BluetoothSocket
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
+import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import org.json.JSONObject
-import java.io.BufferedReader
-import java.io.InputStreamReader
-import java.net.Socket
-import java.io.*
+import java.io.IOException
+import java.io.OutputStream
 
 class select : AppCompatActivity() {
+    private val REQUEST_ENABLE_BT = 1
+    private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
+    private lateinit var bluetoothAdapter: BluetoothAdapter
+    private var isCommunicating = false
+    private var receivedDataList: List<Int> = listOf()
+    private var recipeDataList: List<Int> = listOf()
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_select)
+
+        // 블루투스 권한 요청
+        if (ContextCompat.checkSelfPermission(
+                this, Manifest.permission.BLUETOOTH_CONNECT) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf(Manifest.permission.BLUETOOTH_CONNECT, Manifest.permission.BLUETOOTH_SCAN),
+                BLUETOOTH_PERMISSION_REQUEST_CODE)
+        }
+
+        bluetoothAdapter = BluetoothAdapter.getDefaultAdapter()
+        if (bluetoothAdapter == null) {
+            Log.e("Bluetooth", "Device doesn't support Bluetooth")
+            return
+        }
+
+        // 블루투스 활성화 요청
+        if (!bluetoothAdapter.isEnabled) {
+            val enableBtIntent = Intent(BluetoothAdapter.ACTION_REQUEST_ENABLE)
+            startActivityForResult(enableBtIntent, REQUEST_ENABLE_BT)
+        }
+
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
         val cocktailName = intent.getStringExtra("COCKTAIL_NAME") ?: return
         val fileName = "$cocktailName.json"
-        println(fileName)
         val json = try {
             assets.open(fileName).reader().readText()
         } catch (e: IOException) {
@@ -46,52 +71,50 @@ class select : AppCompatActivity() {
         }
         val jsonObject = JSONObject(json)
 
-        // 각 키에 대해 적절한 메서드 사용
         val name = jsonObject.getString("name")
         val description = jsonObject.getString("description")
+        val head = jsonObject.getString("head")
         val recipe = jsonObject.getString("recipe")
         val order = jsonObject.getString("order")
 
+        val receivedData = intent.getStringExtra("RECEIVED_DATA") ?: ""
+        receivedDataList = processData(receivedData)
+        recipeDataList = processData(recipe)
+
+        Log.d("SelectActivity", "Received Data List: $receivedDataList")
+        Log.d("SelectActivity", "Recipe Data List: $recipeDataList")
+
         val cocktailImg = findViewById<ImageView>(R.id.cocktail_img)
         val imageId = resources.getIdentifier(cocktailName, "drawable", packageName)
-
-
         cocktailImg.setImageResource(imageId)
+
         val cocktailTextView = findViewById<TextView>(R.id.textView)
         cocktailTextView.text = description
+
         val cocktailNameView = findViewById<TextView>(R.id.cocktail_name)
         cocktailNameView.text = name
+
         val selectBtn = findViewById<Button>(R.id.select_cocktail)
 
-        // 서버에 데이터 전송
+        if (!validateData(receivedDataList, recipeDataList)) {
+            selectBtn.isEnabled = false
+        }
+        else {
+            selectBtn.isEnabled = true
+        }
+
+        val send_data = "$head\n\n$recipe\n\n$order"
         selectBtn.setOnClickListener {
-            Thread {
-                try {
-                    val socket = Socket("10.0.2.2", 3000)
-                    socket.use { s ->
-                        val outStream = s.outputStream
-                        val inStream = s.inputStream
-
-                        val data = "2\n\n$recipe"
-                        println(data)
-                        outStream.write(data.toByteArray())
-
-                        // 데이터 수신을 위한 버퍼 준비
-                        val dataArr = ByteArray(1024)  // 적당한 크기의 버퍼 설정
-                        val numBytes = inStream.read(dataArr)  // 서버로부터 데이터 읽기, 데이터 도착까지 블록됨
-                        if (numBytes != -1) {  // 데이터가 정상적으로 읽혔는지 확인
-                            val receivedData = String(dataArr, 0, numBytes)  // 읽은 바이트 수만큼 문자열로 변환
-                            runOnUiThread {
-                                println("data : $receivedData")
-                            }
-                        } else {
-                            println("No data received")
-                        }
-                    }
-                } catch (e: IOException) {
-                    e.printStackTrace()
+            val builder = AlertDialog.Builder(this)
+            builder.setMessage("해당 칵테일을 제조하시겠습니까?")
+                .setPositiveButton("예") { dialog, id ->
+                    sendData(send_data)
+                    Log.d("recipe", send_data)
                 }
-            }.start()
+                .setNegativeButton("아니오") { dialog, id ->
+                    dialog.dismiss()
+                }
+            builder.create().show()
         }
 
         val backBtn = findViewById<Button>(R.id.backBtn)
@@ -99,22 +122,68 @@ class select : AppCompatActivity() {
             finish()
         }
     }
-}
 
-fun readTextFile(context: Context, fileName: String): String {
-    val resourceId = context.resources.getIdentifier(fileName, "raw", context.packageName)
-    if (resourceId == 0) {
-        throw IllegalArgumentException("The given file name does not correspond to a resource in raw folder.")
+    fun sendData(data: String) {
+        synchronized(this) {
+            if (isCommunicating) {
+                Log.d("Bluetooth", "Communication is already in progress.")
+                return@synchronized
+            }
+            isCommunicating = true
+        }
+
+        val communicationThread = Thread {
+            try {
+                val socket = BluetoothManager.getBluetoothSocket()
+                if (socket == null || !socket.isConnected) {
+                    runOnUiThread {
+                        Toast.makeText(this, "Not connected to any device", Toast.LENGTH_SHORT).show()
+                    }
+                    return@Thread
+                }
+
+                val outStream: OutputStream = socket.outputStream
+                outStream.write(data.toByteArray())
+                Log.d("Bluetooth", "Data sent: $data")
+
+                // 수신 버퍼 설정
+                val buffer = ByteArray(1024)
+                val inStream = socket.inputStream
+                val bytesRead = inStream.read(buffer)
+                if (bytesRead == -1) {
+                    Log.d("Bluetooth", "Peer socket closed")
+                } else {
+                    val receivedData = String(buffer, 0, bytesRead)
+                    Log.d("Bluetooth", "Data received: $receivedData")
+
+                    runOnUiThread {
+                        Toast.makeText(applicationContext, "Data received: $receivedData", Toast.LENGTH_SHORT).show()
+                    }
+                }
+
+            } catch (e: IOException) {
+                e.printStackTrace()
+            } finally {
+                synchronized(this) {
+                    isCommunicating = false
+                }
+                Thread.currentThread().interrupt()
+            }
+        }
+        communicationThread.start()
     }
 
-    context.resources.openRawResource(resourceId).use { inputStream ->
-        val reader = BufferedReader(InputStreamReader(inputStream))
-        val content = StringBuilder()
-        var line: String? = reader.readLine()
-        while (line != null) {
-            content.append(line)
-            line = reader.readLine()
+    private fun processData(data: String): List<Int> {
+        return data.split("\n").mapNotNull { it.toIntOrNull() }
+    }
+
+    private fun validateData(receivedData: List<Int>, recipeData: List<Int>): Boolean {
+        if (receivedData.size != recipeData.size) return false
+        for (i in receivedData.indices) {
+            if (receivedData[i] - recipeData[i] <= 2 && recipeData[i]>0) {
+                return false
+            }
         }
-        return content.toString()
+        return true
     }
 }

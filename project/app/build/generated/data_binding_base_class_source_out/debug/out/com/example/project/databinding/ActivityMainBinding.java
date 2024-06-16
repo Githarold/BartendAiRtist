@@ -20,10 +20,16 @@ public final class ActivityMainBinding implements ViewBinding {
   private final ConstraintLayout rootView;
 
   @NonNull
+  public final Button PairingBtn;
+
+  @NonNull
   public final Button chooseBtn;
 
   @NonNull
   public final Button customBtn;
+
+  @NonNull
+  public final Button devBtn;
 
   @NonNull
   public final ConstraintLayout main;
@@ -31,11 +37,14 @@ public final class ActivityMainBinding implements ViewBinding {
   @NonNull
   public final Button recommendBtn;
 
-  private ActivityMainBinding(@NonNull ConstraintLayout rootView, @NonNull Button chooseBtn,
-      @NonNull Button customBtn, @NonNull ConstraintLayout main, @NonNull Button recommendBtn) {
+  private ActivityMainBinding(@NonNull ConstraintLayout rootView, @NonNull Button PairingBtn,
+      @NonNull Button chooseBtn, @NonNull Button customBtn, @NonNull Button devBtn,
+      @NonNull ConstraintLayout main, @NonNull Button recommendBtn) {
     this.rootView = rootView;
+    this.PairingBtn = PairingBtn;
     this.chooseBtn = chooseBtn;
     this.customBtn = customBtn;
+    this.devBtn = devBtn;
     this.main = main;
     this.recommendBtn = recommendBtn;
   }
@@ -67,6 +76,12 @@ public final class ActivityMainBinding implements ViewBinding {
     // This is done to optimize the compiled bytecode for size and performance.
     int id;
     missingId: {
+      id = R.id.PairingBtn;
+      Button PairingBtn = ViewBindings.findChildViewById(rootView, id);
+      if (PairingBtn == null) {
+        break missingId;
+      }
+
       id = R.id.chooseBtn;
       Button chooseBtn = ViewBindings.findChildViewById(rootView, id);
       if (chooseBtn == null) {
@@ -79,6 +94,12 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
+      id = R.id.devBtn;
+      Button devBtn = ViewBindings.findChildViewById(rootView, id);
+      if (devBtn == null) {
+        break missingId;
+      }
+
       ConstraintLayout main = (ConstraintLayout) rootView;
 
       id = R.id.recommendBtn;
@@ -87,8 +108,8 @@ public final class ActivityMainBinding implements ViewBinding {
         break missingId;
       }
 
-      return new ActivityMainBinding((ConstraintLayout) rootView, chooseBtn, customBtn, main,
-          recommendBtn);
+      return new ActivityMainBinding((ConstraintLayout) rootView, PairingBtn, chooseBtn, customBtn,
+          devBtn, main, recommendBtn);
     }
     String missingId = rootView.getResources().getResourceName(id);
     throw new NullPointerException("Missing required view with ID: ".concat(missingId));

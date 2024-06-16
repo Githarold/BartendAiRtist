@@ -8,25 +8,50 @@
     android:orientation="vertical"
     tools:context=".Custom">
 
-    <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/backBtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="뒤로가기"
-        android:background="@drawable/btn_background"
-        android:layout_margin="5dp"
-        android:textColor="#FFFFFF"/>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/backBtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="뒤로가기"
+            android:background="@drawable/btn_background"
+            android:layout_margin="5dp"
+            android:textColor="#FFFFFF"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+        <androidx.appcompat.widget.AppCompatButton
+            android:id="@+id/noticeBtn"
+            android:layout_width="52dp"
+            android:layout_height="43dp"
+            android:layout_margin="5dp"
+            android:background="@drawable/btn_circle"
+            android:text="!"
+            android:textColor="#03A9F4"
+            android:textSize="30dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toBottomOf="parent" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/cocktail_ingredients_list"
         android:layout_width="match_parent"
-        android:layout_height="638dp" />
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:layout_margin="5dp" />
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/selectBtn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:background="@drawable/edit_background"
-        android:layout_gravity="bottom|right"
-        android:text="선택" />
+        android:layout_gravity="bottom|end"
+        android:text="선택"
+        android:layout_margin="5dp" />
 </LinearLayout>

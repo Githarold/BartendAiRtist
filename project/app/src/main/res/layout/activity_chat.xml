@@ -1,4 +1,3 @@
-<?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -12,18 +11,16 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_alignParentTop="true"
-        android:layout_above="@id/input_layout"
-        />
+        android:layout_above="@id/input_layout" />
 
     <TextView
+        android:id="@+id/tv_welcome"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:id="@+id/tv_welcome"
         android:layout_centerInParent="true"
         android:text="Welcome"
         android:gravity="center"
-        android:textSize="28sp"
-        />
+        android:textSize="28sp" />
 
     <LinearLayout
         android:id="@+id/input_layout"
@@ -36,8 +33,9 @@
         <!-- 입력 창 -->
         <EditText
             android:id="@+id/message_edit"
-            android:layout_width="328dp"
+            android:layout_width="0dp"
             android:layout_height="50dp"
+            android:layout_weight="1"
             android:layout_marginStart="10dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="5dp"
@@ -52,8 +50,9 @@
         <!-- 전송 버튼 -->
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/send_btn"
-            android:layout_width="45dp"
-            android:layout_height="wrap_content"
+            android:layout_width="0dp"
+            android:layout_height="50dp"
+            android:layout_weight="0.2"
             android:layout_marginStart="0dp"
             android:layout_marginTop="5dp"
             android:layout_marginEnd="10dp"
