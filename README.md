@@ -1,5 +1,7 @@
 # 🍹 BartendAiRtist
 
+![AI](https://github.com/Githarold/BartendAiRtist/assets/101968287/77cd479b-e9c5-4142-9f24-73aca56d9382)
+
 BartendAiRtist에 오신 것을 환영합니다, 당신의 취향과 기분에 딱 맞춘 칵테일을 만들어 드립니다!
 
 생성형 AI (Chat GPT API)를 활용한 BartendAiRtist는 당신의 칵테일 여정을 시작하도록 해줄 혁신적인 임베디드 시스템입니다. 안드로이드 앱에서 AI 바텐더와 대화를 나누고, 취향과 현재 기분을 말하기만 하면, 마법이 시작됩니다.
