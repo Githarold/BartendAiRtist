@@ -8,9 +8,6 @@ BartendAiRtist에 오신 것을 환영합니다, 당신의 취향과 기분에 �
 
 새로운 것을 원하든, 클래식한 칵테일을 원하든, 혹은 음료를 커스텀하고 싶든, BartendAiRtist는 개인화된 경험을 제공한 후, 즉석에서 완벽한 칵테일을 준비합니다.
 
-![KakaoTalk_20240618_133053802](https://github.com/Githarold/BartendAiRtist/assets/101968287/fea8d7d3-351f-46cb-b08c-c6a0ce0b0d21)
-
-
 ## 📸 실물 사진
 
 <img src="https://github.com/Githarold/BartendAiRtist/assets/101968287/506ef0d0-81f2-4841-b15b-39b1d6479a41" alt="실물 사진" width="35%">
@@ -53,6 +50,10 @@ BartendAiRtist를 통해 칵테일을 즐기고 싶다면 다음 단계를 따�
 아래는 BartendAiRtist의 시연 영상입니다. BartendAiRtist가 어떻게 작동하는지 확인해보세요!
 
 [![BartendAiRtist 시연](https://img.youtube.com/vi/AzKcaZExot8/0.jpg)](https://youtu.be/AzKcaZExot8)
+
+## 👏 Poster
+
+![KakaoTalk_20240618_133053802](https://github.com/Githarold/BartendAiRtist/assets/101968287/fea8d7d3-351f-46cb-b08c-c6a0ce0b0d21)
 
 ## 💡 Contributing
 
