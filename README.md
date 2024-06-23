@@ -9,7 +9,7 @@ BartendAiRtist에 오신 것을 환영합니다, 당신의 취향과 기분에 �
 새로운 것을 원하든, 클래식한 칵테일을 원하든, 혹은 음료를 커스텀하고 싶든, BartendAiRtist는 개인화된 경험을 제공한 후, 즉석에서 완벽한 칵테일을 준비합니다.
 
 위키 주소:
-https://capstone.uos.ac.kr/mie/index.php/%EC%8C%88@%EB%BD%95_-_%EC%8A%A4%EB%A7%88%ED%8A%B8_%EB%B0%94%ED%85%90%EB%8D%94(Smart_Bartender)
+[쌈@뽕 - 스마트 바텐더(Smart Bartender)](https://capstone.uos.ac.kr/mie/index.php/%EC%8C%88@%EB%BD%95_-_%EC%8A%A4%EB%A7%88%ED%8A%B8_%EB%B0%94%ED%85%90%EB%8D%94(Smart_Bartender))
 
 ## 📸 실물 사진
 
