@@ -1,1 +1,0 @@
-[{'Vodka': 1, 'Cranberry Juice': 2, 'Triple Sec': 1, 'Lime Juice': 0.5}, {'Vodka': 2, 'Cranberry Juice': 4, 'Triple Sec': 2, 'Lime Juice': 1}]
