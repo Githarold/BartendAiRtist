@@ -9,6 +9,8 @@ import android.bluetooth.BluetoothAdapter
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.util.Log
 import android.view.View
 import android.widget.Button
@@ -17,43 +19,26 @@ import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
-import org.json.JSONException
-import org.json.JSONObject
 import java.io.IOException
 import okhttp3.OkHttpClient;
-import okhttp3.RequestBody
-import okhttp3.Request
-import okhttp3.Request.Builder
 import okhttp3.MediaType
 import okhttp3.MediaType.Companion.toMediaType
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
-import android.widget.LinearLayout
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import okhttp3.RequestBody.Companion.toRequestBody
-import org.json.JSONArray
-import com.google.gson.Gson
-import java.util.concurrent.TimeUnit
-import com.aallam.openai.*
 import com.aallam.openai.api.BetaOpenAI
-import com.aallam.openai.client.*
 import com.aallam.openai.client.OpenAI
 import com.aallam.openai.api.assistant.*
-import com.aallam.openai.api.core.RequestOptions
 import com.aallam.openai.api.core.Role
 import com.aallam.openai.api.core.Status
-import com.aallam.openai.api.http.Timeout
 import com.aallam.openai.api.message.MessageContent
 import com.aallam.openai.api.message.MessageRequest
 import com.aallam.openai.api.model.ModelId
 import com.aallam.openai.api.run.RunRequest
-import com.aallam.openai.api.thread.ThreadId
 import kotlinx.coroutines.*
 import java.io.OutputStream
-import kotlin.math.roundToInt
-import kotlin.time.Duration.Companion.seconds
 
 class Chat : AppCompatActivity() {
     var recycler_view: RecyclerView? = null
@@ -67,6 +52,9 @@ class Chat : AppCompatActivity() {
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
     private var isCommunicating = false
+    private val handler = Handler(Looper.getMainLooper())
+    private var dotsRunnable: Runnable? = null
+    private var dots = ""
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -132,6 +120,7 @@ class Chat : AppCompatActivity() {
             tv_welcome!!.setVisibility(View.GONE)
         } else {
             addToChat(question, Message.SENT_BY_ME, false)
+            startDotsAnimation() // 메시지를 보낼 때 애니메이션 시작
             CoroutineScope(Dispatchers.Main).launch {
                 callAPI(question)
             }
@@ -152,8 +141,39 @@ class Chat : AppCompatActivity() {
 
     // 응답 메시지를 추가하는 함수
     fun addResponse(response: String?, hasButton: Boolean = false) {
-        messageList!!.removeAt(messageList!!.size - 1)
+        stopDotsAnimation() // 응답을 추가할 때 애니메이션 중지
+        if (messageList!!.isNotEmpty() && messageList!!.last().sentBy == Message.SENT_BY_BOT) {
+            messageList!!.removeAt(messageList!!.size - 1)
+        }
         addToChat(response, Message.SENT_BY_BOT, hasButton)
+    }
+
+    // 애니메이션 시작 함수
+    private fun startDotsAnimation() {
+        dots = ""
+        dotsRunnable = object : Runnable {
+            override fun run() {
+                dots += "."
+                if (dots.length > 3) dots = ""
+                updateDotsMessage()
+                handler.postDelayed(this, 500)
+            }
+        }
+        handler.post(dotsRunnable!!)
+    }
+
+    // 애니메이션 중지 함수
+    private fun stopDotsAnimation() {
+        handler.removeCallbacks(dotsRunnable!!)
+        dotsRunnable = null
+    }
+
+    // 애니메이션 메시지 업데이트 함수
+    private fun updateDotsMessage() {
+        if (messageList!!.isNotEmpty() && messageList!!.last().sentBy == Message.SENT_BY_BOT) {
+            messageList!!.last().message = "${dots}"
+            messageAdapter!!.notifyItemChanged(messageList!!.size - 1, "payload")
+        }
     }
 
     // OpenAI API를 호출, 사용자 입력에 부합하는 칵테일을 추천한 뒤
@@ -210,6 +230,7 @@ class Chat : AppCompatActivity() {
                 """.trimIndent()
             )
         )
+
 
         // 대화를 관리할 Thread 생성
         val thread = openai.thread()

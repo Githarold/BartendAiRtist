@@ -15,9 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import java.io.IOException
-import java.io.OutputStream
-
 
 class MessageAdapter(private val messageList: List<Message>, private val chatInstance: Chat) : RecyclerView.Adapter<MessageAdapter.ViewHolder>() {
     private var isCommunicating = false
@@ -29,6 +26,20 @@ class MessageAdapter(private val messageList: List<Message>, private val chatIns
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val message = messageList[position]
+        bindMessage(holder, message)
+    }
+
+    override fun onBindViewHolder(holder: ViewHolder, position: Int, payloads: MutableList<Any>) {
+        if (payloads.isNotEmpty()) {
+            // payload가 있는 경우 부분 업데이트
+            val message = messageList[position]
+            holder.leftChatTv.text = message.message
+        } else {
+            super.onBindViewHolder(holder, position, payloads)
+        }
+    }
+
+    private fun bindMessage(holder: ViewHolder, message: Message) {
         val recipe = Chat.Companion.recipeString
         if (message.sentBy == Message.SENT_BY_ME) {
             holder.leftChatView.visibility = View.GONE
@@ -54,7 +65,6 @@ class MessageAdapter(private val messageList: List<Message>, private val chatIns
                 Toast.makeText(holder.itemView.context, "Recipe not available", Toast.LENGTH_SHORT).show()
             }
         }
-
     }
 
     override fun getItemCount(): Int = messageList.size
@@ -102,4 +112,3 @@ class MessageAdapter(private val messageList: List<Message>, private val chatIns
         return result.toString().trim()
     }
 }
-
