@@ -21,8 +21,6 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
 import okhttp3.OkHttpClient;
-import okhttp3.MediaType
-import okhttp3.MediaType.Companion.toMediaType
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
 import android.widget.Toast
@@ -55,6 +53,8 @@ class Chat : AppCompatActivity() {
     private val handler = Handler(Looper.getMainLooper())
     private var dotsRunnable: Runnable? = null
     private var dots = ""
+    private var recommendReason: String? = null
+    private var currentCharIndex = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_chat)
@@ -135,17 +135,19 @@ class Chat : AppCompatActivity() {
         runOnUiThread {
             messageList!!.add(Message(message, sentBy, hasButton))
             messageAdapter!!.notifyDataSetChanged()
-            recycler_view!!.smoothScrollToPosition(messageAdapter!!.getItemCount())
+            recycler_view!!.smoothScrollToPosition(messageAdapter!!.getItemCount()-1)
         }
     }
 
     // 응답 메시지를 추가하는 함수
     fun addResponse(response: String?, hasButton: Boolean = false) {
-        stopDotsAnimation() // 응답을 추가할 때 애니메이션 중지
+        stopDotsAnimation() // 응답을 추가할 때 기존 애니메이션 중지
         if (messageList!!.isNotEmpty() && messageList!!.last().sentBy == Message.SENT_BY_BOT) {
             messageList!!.removeAt(messageList!!.size - 1)
         }
-        addToChat(response, Message.SENT_BY_BOT, hasButton)
+        recommendReason = response
+        addToChat("", Message.SENT_BY_BOT, hasButton) // 빈 문자열로 새로운 메시지 추가
+        startTextAnimation() // 새로운 애니메이션 시작
     }
 
     // 애니메이션 시작 함수
@@ -173,8 +175,44 @@ class Chat : AppCompatActivity() {
         if (messageList!!.isNotEmpty() && messageList!!.last().sentBy == Message.SENT_BY_BOT) {
             messageList!!.last().message = "${dots}"
             messageAdapter!!.notifyItemChanged(messageList!!.size - 1, "payload")
+            recycler_view!!.smoothScrollToPosition(messageAdapter!!.itemCount - 1)
         }
     }
+
+    private fun startTextAnimation() {
+        currentCharIndex = 0
+        dotsRunnable = object : Runnable {
+            override fun run() {
+                if (recommendReason != null && currentCharIndex < recommendReason!!.length) {
+                    updateTextMessage(recommendReason!![currentCharIndex].toString())
+                    currentCharIndex++
+                    handler.postDelayed(this, 50)
+                } else {
+                    stopTextAnimation()
+                }
+            }
+        }
+        handler.post(dotsRunnable!!)
+    }
+
+    // 애니메이션 중지 함수
+    private fun stopTextAnimation() {
+        handler.removeCallbacks(dotsRunnable!!)
+        dotsRunnable = null
+    }
+
+    // 애니메이션 메시지 업데이트 함수
+    private fun updateTextMessage(char: String) {
+        if (messageList!!.isNotEmpty() && messageList!!.last().sentBy == Message.SENT_BY_BOT) {
+            messageList!!.last().message += char
+            messageAdapter!!.notifyItemChanged(messageList!!.size - 1, "payload")
+            recycler_view!!.post {
+                recycler_view!!.smoothScrollToPosition(messageAdapter!!.itemCount - 1)
+            } // 추가된 부분: notifyItemChanged 호출 후 스크롤
+        }
+    }
+
+
 
     // OpenAI API를 호출, 사용자 입력에 부합하는 칵테일을 추천한 뒤
     // addResponse 함수를 호출해 응답 메시지로 추가하는 함수
@@ -231,7 +269,6 @@ class Chat : AppCompatActivity() {
             )
         )
 
-
         // 대화를 관리할 Thread 생성
         val thread = openai.thread()
         println(thread.id)
@@ -252,6 +289,7 @@ class Chat : AppCompatActivity() {
             val textContent = message.content.first() as? MessageContent.Text ?: error("Expected MessageContent.Text")
             println(textContent.text.value)
         }
+
 
         // AI 바텐더에게 실행 요청
         val run = openai.createRun(
@@ -308,7 +346,7 @@ class Chat : AppCompatActivity() {
         val messageText = textContent.text.value
         println(messageText)
 
-        if (messageText != null && messageText.isNotEmpty()){
+        if (messageText != null && messageText.isNotEmpty()) {
             val parts = messageText.split("@")
             if (parts.size > 1) {
                 val recommendReason = parts[0]
@@ -316,7 +354,7 @@ class Chat : AppCompatActivity() {
                 recipeString = parts[1]
                 Log.d("recipeString", recipeString!!)
 
-                val list = recipeString!!.trim('[', ']').split(",").map { it.trim().toInt()}
+                val list = recipeString!!.trim('[', ']').split(",").map { it.trim().toInt() }
                 println(list)
 
                 if (list.sum() > 7) {
@@ -333,7 +371,7 @@ class Chat : AppCompatActivity() {
             } else {
                 addResponse(messageText, false)
             }
-        }else{
+        } else {
             addResponse("Err.. Try again", false)
         }
 
@@ -392,7 +430,6 @@ class Chat : AppCompatActivity() {
 
     // 클래스 레벨에서 접근 가능한 객체 멤버 선언
     companion object {
-        val JSON: MediaType = "application/json; charset=utf-8".toMediaType()
         private const val MY_SECRET_KEY = ""
         var recipeString: String? = null
     }

@@ -25,7 +25,7 @@ androidx-activity = { group = "androidx.activity", name = "activity", version.re
 androidx-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout", version.ref = "constraintlayout" }
 okhttp = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp" }
 gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
-openai-client = { group = "com.aallam.openai", name = "openai-client", version.ref = "openaiClient" }
+openai-client = { group = "com.aallam.openai", name = "openai-client", version = "3.8.2" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version = "2.3.11" }
 
 
