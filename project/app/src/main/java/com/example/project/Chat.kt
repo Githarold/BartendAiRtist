@@ -64,8 +64,8 @@ class Chat : AppCompatActivity() {
         send_btn = findViewById<Button>(R.id.send_btn)
         recycler_view!!.setHasFixedSize(true)
         val manager = LinearLayoutManager(this)
-        manager.setStackFromEnd(true)
-        recycler_view!!.setLayoutManager(manager)
+        manager.stackFromEnd = true
+        recycler_view!!.layoutManager = manager
         messageList = ArrayList()
         messageAdapter = MessageAdapter(messageList!!, this)
         recycler_view!!.setAdapter(messageAdapter)
@@ -205,10 +205,15 @@ class Chat : AppCompatActivity() {
     private fun updateTextMessage(char: String) {
         if (messageList!!.isNotEmpty() && messageList!!.last().sentBy == Message.SENT_BY_BOT) {
             messageList!!.last().message += char
-            messageAdapter!!.notifyItemChanged(messageList!!.size - 1, "payload")
+            messageAdapter!!.notifyItemChanged(messageList!!.size - 1)
             recycler_view!!.post {
-                recycler_view!!.smoothScrollToPosition(messageAdapter!!.itemCount - 1)
-            } // 추가된 부분: notifyItemChanged 호출 후 스크롤
+                val lastItemPosition = messageAdapter!!.itemCount - 1
+                val lastVisibleItemPosition = (recycler_view!!.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
+
+                if (lastItemPosition == lastVisibleItemPosition) {
+                    recycler_view!!.smoothScrollToPosition(lastItemPosition)
+                }
+            }
         }
     }
 
