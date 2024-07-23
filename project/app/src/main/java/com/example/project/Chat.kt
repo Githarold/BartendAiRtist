@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.io.IOException
-import okhttp3.OkHttpClient;
 import android.view.inputmethod.EditorInfo
 import android.view.KeyEvent
 import android.widget.Toast
@@ -45,7 +44,6 @@ class Chat : AppCompatActivity() {
     var send_btn: Button? = null
     var messageList: MutableList<Message>? = null
     var messageAdapter: MessageAdapter? = null
-    var client: OkHttpClient = OkHttpClient()
     private val REQUEST_ENABLE_BT = 1
     private val BLUETOOTH_PERMISSION_REQUEST_CODE = 100
     private lateinit var bluetoothAdapter: BluetoothAdapter
@@ -135,7 +133,7 @@ class Chat : AppCompatActivity() {
         runOnUiThread {
             messageList!!.add(Message(message, sentBy, hasButton))
             messageAdapter!!.notifyDataSetChanged()
-            recycler_view!!.smoothScrollToPosition(messageAdapter!!.getItemCount()-1)
+            recycler_view!!.scrollToPosition(messageAdapter!!.getItemCount()-1)
         }
     }
 
@@ -175,7 +173,7 @@ class Chat : AppCompatActivity() {
         if (messageList!!.isNotEmpty() && messageList!!.last().sentBy == Message.SENT_BY_BOT) {
             messageList!!.last().message = "${dots}"
             messageAdapter!!.notifyItemChanged(messageList!!.size - 1, "payload")
-            recycler_view!!.smoothScrollToPosition(messageAdapter!!.itemCount - 1)
+            recycler_view!!.scrollToPosition(messageAdapter!!.itemCount - 1)
         }
     }
 
@@ -211,7 +209,7 @@ class Chat : AppCompatActivity() {
                 val lastVisibleItemPosition = (recycler_view!!.layoutManager as LinearLayoutManager).findLastVisibleItemPosition()
 
                 if (lastItemPosition == lastVisibleItemPosition) {
-                    recycler_view!!.smoothScrollToPosition(lastItemPosition)
+                    recycler_view!!.scrollToPosition(lastItemPosition)
                 }
             }
         }
@@ -225,7 +223,6 @@ class Chat : AppCompatActivity() {
     suspend fun callAPI(question: String?){
         messageList!!.add(Message("...", Message.SENT_BY_BOT, false))
         val openai = OpenAI( token = MY_SECRET_KEY)
-        val real_user_mood = question
 
         // Few-shot Learning을 위한 예시 입력 선언
         val exampleInputDict = mapOf(
@@ -283,7 +280,7 @@ class Chat : AppCompatActivity() {
             threadId = thread.id,
             request = MessageRequest(
                 role = Role.User,
-                content = real_user_mood!!
+                content = question!!
             )
         )
 
@@ -301,7 +298,7 @@ class Chat : AppCompatActivity() {
             threadId = thread.id,
             request = RunRequest(
                 assistantId = batender.id,
-                instructions ="""
+                instructions = """
                             Ingredients in order: [Vodka, Rum, Gin, Triple Sec, Diluted Lemon Juice, Orange Juice, Grapefruit Juice, Cranberry Juice]
 
                             Example 1:
@@ -333,7 +330,7 @@ class Chat : AppCompatActivity() {
                             Output: $exampleGptResponse7 
                             
                             You have to respond in Korean:
-                            Input: Inventory - $realInputDict, Mood/Preference - '$real_user_mood'
+                            Input: Inventory - $realInputDict, Mood/Preference - '$question'
                             Output: 
                                             """.trimIndent())
         )
